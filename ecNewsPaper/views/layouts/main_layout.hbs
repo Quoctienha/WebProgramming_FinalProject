@@ -74,9 +74,45 @@
         <!--Catefories level 1-->
         <div class="col-sm-3 ">
 
-          <div class="card" style="width: 21rem;">
+          <div class="card mb-3" style="width: 21rem;">
             <div class="card-header text-white" style="background-color: darkTurquoise;">
               <h5>Chuyên mục</h5>
+            </div>
+            
+            <div class="accordion" id="accordionCatefories">
+              {{#each lcCategories}}
+                <div class="card">
+                <div class="card-header" id="headingOne">
+                  <h2 class="mb-0">
+                    <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseCatefories{{ID}}" aria-expanded="true" aria-controls="collapseCatefories{{ID}}">
+                     {{Name}}
+                    </button>
+                  </h2>
+                </div>
+            
+                <div id="collapseCatefories{{ID}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionCatefories">
+                  <div class="list-group list-group-flush">
+                     <!--Catefories level 2-->
+                     {{#each subCategories}}
+                     <a href="https://icons.getbootstrap.com/?q=search" class="list-group-item list-group-item-action">
+                      {{Name}}
+                      </a>
+                    {{/each}} 
+                                          
+                     
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+                           
+            </div>
+          </div>
+
+
+          <!--danh sách bài viết-->
+          <div class="card" style="width: 21rem;">
+            <div class="card-header text-white" style="background-color: darkTurquoise;">
+              <h5>Nổi bậc</h5>
             </div>
             <div class="accordion" id="accordionExample">
 
@@ -84,7 +120,7 @@
                 <div class="card-header" id="headingOne">
                   <h2 class="mb-0">
                     <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                      Chuyên mục 1
+                      Top 10 bài viết xem nhiều nhất
                     </button>
                   </h2>
                 </div>
@@ -111,7 +147,7 @@
                 <div class="card-header" id="headingTwo">
                   <h2 class="mb-0">
                     <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                      Chuyên mục 2
+                     Top 10 bài viết Mới nhất
                     </button>
                   </h2>
                 </div>
@@ -127,7 +163,7 @@
                 <div class="card-header" id="headingThree">
                   <h2 class="mb-0">
                     <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Chuyên mục 3
+                      Top 10 chuyên mục
                     </button>
                   </h2>
                 </div>
@@ -140,6 +176,9 @@
               </div>
             </div>
           </div>
+
+
+
         </div>
 
        </div>
