@@ -18,6 +18,9 @@ app.engine('hbs', engine({
 app.set('view engine', 'hbs');
 app.set('views', './views');
 
+//khai báo các đường dẫn cho tập tin tĩnh
+//http://localhost:3000/static/imgs/1.jpg
+app.use('/static', express.static('static'));
 
 //route
 app.get('/', function(req, res) {
