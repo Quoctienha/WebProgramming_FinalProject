@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <!--Bootstrap icon-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      .fixed-right {
+        height: 100vh;
+        z-index: 1;
+      }
+    </style>
 
     <title>ecNewsPaper</title>
   </head>
@@ -24,82 +30,73 @@
         </button>
       
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
+          <!--Search-->
+          <form class="form-inline my-2 my-lg-0 border border-primary">
+            <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">
+                <b>
+                  Search 
+                  <i class="bi bi-search"></i>
+                </b>
+            </button>
+          </form>
+
+          <!--Sign up/ log in-->
+          <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                Dropdown
+              <a class="nav-link" href="">
+                <b>
+                  <i class="bi bi-person-plus"></i>
+                  Đăng ký
+                </b>
               </a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link disabled">Disabled</a>
+              <a class="nav-link" href="">
+                <b>
+                  <i class="bi bi-box-arrow-in-right"></i>
+                  Đăng nhập
+                </b>
+              </a>
             </li>
           </ul>
 
-          <!--Search-->
-          <form class="form-inline my-2 my-lg-0 w-75">
-            <input class="form-control mr-sm-2 w-50" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">
-                Search
-                <i class="bi bi-search"></i>
-            </button>
-
-          </form>
+          
         </div>
       </nav>
 
     <!--Menu home-->
     <div class="container-fluid">
-       <div class="row p-0">
+       <div class="row">
         <div class="col-sm-9">
           {{{body}}}
-          
-          
-
         </div>
 
-
-
-        <!--Catefories level 1-->
-        <div class="col-sm-3 ">
-
-          <div class="card mb-3" style="width: 21rem;">
+        <!--Categories-->
+        <div class="col-sm-3 fixed-right">
+          <div class="card mb-3">
             <div class="card-header text-white" style="background-color: darkTurquoise;">
               <h5>Chuyên mục</h5>
-            </div>
-            
+            </div>           
             <div class="accordion" id="accordionCatefories">
               {{#each lcCategories}}
                 <div class="card">
                 <div class="card-header" id="headingOne">
                   <h2 class="mb-0">
-                    <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseCatefories{{ID}}" aria-expanded="true" aria-controls="collapseCatefories{{ID}}">
-                     {{Name}}
+                    <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseCatefories{{CID}}" aria-expanded="true" aria-controls="collapseCatefories{{CID}}">
+                     {{CName}}
                     </button>
                   </h2>
                 </div>
             
-                <div id="collapseCatefories{{ID}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionCatefories">
+                <div id="collapseCatefories{{CID}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionCatefories">
                   <div class="list-group list-group-flush">
-                     <!--Catefories level 2-->
+                     <!--SubCategories-->
                      {{#each subCategories}}
                      <a href="https://icons.getbootstrap.com/?q=search" class="list-group-item list-group-item-action">
-                      {{Name}}
+                      {{SCName}}
                       </a>
-                    {{/each}} 
-                                          
-                     
+                    {{/each}}                                               
                   </div>
                 </div>
               </div>
@@ -107,78 +104,6 @@
                            
             </div>
           </div>
-
-
-          <!--danh sách bài viết-->
-          <div class="card" style="width: 21rem;">
-            <div class="card-header text-white" style="background-color: darkTurquoise;">
-              <h5>Nổi bậc</h5>
-            </div>
-            <div class="accordion" id="accordionExample">
-
-              <div class="card">
-                <div class="card-header" id="headingOne">
-                  <h2 class="mb-0">
-                    <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                      Top 10 bài viết xem nhiều nhất
-                    </button>
-                  </h2>
-                </div>
-            
-                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                  <div class="list-group list-group-flush">
-                     <!--Catefories level 2-->
-                     <a href="https://icons.getbootstrap.com/?q=search" class="list-group-item list-group-item-action">
-                      Chuyên mục 1.1
-                      </a>
-                  
-                      <a href="https://icons.getbootstrap.com/?q=search" class="list-group-item list-group-item-action">
-                        Chuyên mục 1.2
-                        </a>
-                      <a href="https://icons.getbootstrap.com/?q=search" class="list-group-item list-group-item-action">
-                          Chuyên mục 1.3
-                      </a>
-                     
-                  </div>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-header" id="headingTwo">
-                  <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                     Top 10 bài viết Mới nhất
-                    </button>
-                  </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                  <div class="card-body">
-                     <!--Catefories level 2-->
-                    Some placeholder content for the second accordion panel. This panel is hidden by default.
-                  </div>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-header" id="headingThree">
-                  <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Top 10 chuyên mục
-                    </button>
-                  </h2>
-                </div>
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                  <div class="card-body">
-                     <!--Catefories level 2-->
-                    And lastly, the placeholder content for the third and final accordion panel. This panel is hidden by default.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-
         </div>
 
        </div>
