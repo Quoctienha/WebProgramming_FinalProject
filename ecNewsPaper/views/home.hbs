@@ -1,5 +1,7 @@
+
+<!--Top 3 bài viết-->
 <div class="card">
-            <h4 class="card-header text-white" style="background-color: darkBlue;">Top 3 bài viết nổi bật nhất tuần</h4>
+            <h4 class="card-header text-white" style="background-color: darkTurquoise;">Top 3 bài viết nổi bật nhất tuần</h4>
             <div class="card-body p-0">
               <!--carousel-->
               <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
@@ -10,33 +12,33 @@
                 </ol>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                     <!--thứ muốn hiện lên-->
-                    <div class="card bg-light" >
-                        <img src="http://localhost:3030/static/imgs/1.jpg" class="card-img-top" alt="..." style="height: 30rem;">
+                    <!--thứ muốn hiện lên-->
+                    <div class="card" >
+                         <img src="http://localhost:3030/static/imgs/1.jpg" class="card-img-top" alt="..." style="height: 30rem;">
                         <div class="card-body">
-                          <h5 class="card-title">tiêu đề 1</h5>
-                          <p class="card-text">tóm tắt</p>
+                          <h5 class="card-title">{{lastPost.PostTitle}}</h5>
+                          <p class="card-text">{{lastPost.SumContent}}</p>
                           <a href="#" class="btn btn-primary">                          
-                            Detail
+                           Chi tiết
                             <i class="bi bi-ticket-detailed"></i>
                           </a>
                         </div>
                     </div>
-                   
-                    
-                   
+    
                     
                   </div>
+                  
     
+                  {{#each top2post}}
                   <div class="carousel-item">
                     <!--thứ muốn hiện lên-->
                     <div class="card" >
                          <img src="http://localhost:3030/static/imgs/1.jpg" class="card-img-top" alt="..." style="height: 30rem;">
                         <div class="card-body">
-                          <h5 class="card-title">Card title 2</h5>
-                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                          <h5 class="card-title">{{PostTitle}}</h5>
+                          <p class="card-text">{{SumContent}}</p>
                           <a href="#" class="btn btn-primary">                          
-                            Detail
+                            Chi tiết
                             <i class="bi bi-ticket-detailed"></i>
                           </a>
                         </div>
@@ -44,19 +46,10 @@
     
                     
                   </div>
+
+                  {{/each}}
     
-                  <div class="carousel-item">
-                    <!--thứ muốn hiện lên-->
-                    <div class="card">
-                         <img src="http://localhost:3030/static/imgs/1.jpg" class="card-img-top" alt="..." style="height: 30rem;">
-                        <div class="card-body">
-                          <h5 class="card-title">Card title 3</h5>
-                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                          <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                    </div>
-                   
-                  </div>
+                  
                 </div>
                 <button class="carousel-control-prev" type="button" data-target="#carouselExampleCaptions" data-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -69,4 +62,104 @@
               </div>
               
             </div>
-          </div>
+</div>
+
+<div class="card text-center mt-5">
+  <div class="card-header">
+    <h5>
+      Top 10 bài viết được xem nhiều nhất (mọi chuyên mục)
+    </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card-footer align-middle">
+   <!--Pagination-->
+    <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+<div class="card text-center mt-5">
+  <div class="card-header">
+    <h5>
+      Top 10 bài viết mới nhất (mọi chuyên mục)
+    </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card-footer">
+    <!--Pagination-->
+    <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+<div class="card text-center mt-5">
+  <div class="card-header">
+     <h5>
+      Top 10 chuyên mục, mỗi chuyên mục 1 bài mới nhất
+     </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card-footer">
+    <!--Pagination-->
+    <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+
