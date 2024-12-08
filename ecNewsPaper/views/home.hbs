@@ -16,31 +16,51 @@
                     <div class="card" >
                          <img src="http://localhost:3030/static/imgs/1.jpg" class="card-img-top" alt="..." style="height: 30rem;">
                         <div class="card-body">
-                          <h5 class="card-title">{{lastPost.PostTitle}}</h5>
+                          <h5 class="card-title">
+                            {{lastPost.PostTitle}}
+                            {{#if lastPost.Premium}}                                                             
+                                <span class="badge badge-pill badge-warning">
+                                  Premium
+                                  <i class="bi bi-stars"></i>
+                                </span>  
+                            {{else}}
+                            {{/if}}                                                    
+                          </h5>                                                                          
                           <p class="card-text">{{lastPost.SumContent}}</p>
+                          
                           <a href="#" class="btn btn-primary">                          
-                           Chi tiết
-                            <i class="bi bi-ticket-detailed"></i>
+                              Chi tiết
+                              <i class="bi bi-ticket-detailed"></i>
                           </a>
                         </div>
                     </div>
     
                     
                   </div>
-                  
-    
+                     
                   {{#each top2post}}
                   <div class="carousel-item">
                     <!--thứ muốn hiện lên-->
                     <div class="card" >
                          <img src="http://localhost:3030/static/imgs/1.jpg" class="card-img-top" alt="..." style="height: 30rem;">
-                        <div class="card-body">
-                          <h5 class="card-title">{{PostTitle}}</h5>
+                        <div class="card-body"> 
+                          <h5 class="card-title">
+                            {{PostTitle}}
+                            {{#if Premium}}                                                             
+                                <span class="badge badge-pill badge-warning">
+                                  Premium
+                                  <i class="bi bi-stars"></i>
+                                </span>  
+                            {{else}}
+                            {{/if}}                                                   
+                          </h5>                                                                          
                           <p class="card-text">{{SumContent}}</p>
-                          <a href="#" class="btn btn-primary">                          
-                            Chi tiết
-                            <i class="bi bi-ticket-detailed"></i>
-                          </a>
+                          
+                              <a href="#" class="btn btn-primary">                          
+                                Chi tiết
+                                <i class="bi bi-ticket-detailed"></i>
+                              </a>
+                          
                         </div>
                     </div>
     
@@ -71,9 +91,14 @@
     </h5>
   </div>
   <div class="card-body">
-    <h5 class="card-title">Special title treatment</h5>
-    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+   <div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
     <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
   </div>
   <div class="card-footer align-middle">
    <!--Pagination-->

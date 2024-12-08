@@ -49,7 +49,7 @@ app.get('/', async function(req, res) {
     top2post: top3post,
     lastPost:lastPost
   });
-  //console.log(lastPost);
+  //console.log(top3post);
 })
 
 app.listen(port, function() {

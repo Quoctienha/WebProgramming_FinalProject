@@ -3,7 +3,7 @@ import db from '../utils/db.js';
 export default{
     
     top3PostsLastWeek(){
-        return db('posts').orderBy('view', 'desc').orderBy('TimePost', 'desc').limit(3);
+        return db('posts').where('StatusPost', "Đã xuất bản").orderBy('view', 'desc').orderBy('TimePost', 'desc').limit(3);
     }
 
     
