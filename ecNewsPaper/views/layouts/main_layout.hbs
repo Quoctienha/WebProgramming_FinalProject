@@ -46,7 +46,7 @@
                   <div class="card bg-primary text-white">
                     <div class="card-header" id="heading{{CID}}">
                       <h2 class="mb-0 d-flex justify-content-between">
-                        <a href="youtube.com" class="btn btn-lg btn-block active text-left text-white p-0" role="button" aria-pressed="true">{{CName}}</a>
+                        <a href="" class="btn btn-lg btn-block active text-left text-white p-0" role="button" aria-pressed="true">{{CName}}</a>
                         <button class="btn text-right text-white" type="button" data-toggle="collapse" data-target="#collapseCategories{{CID}}" aria-expanded="false" aria-controls="collapseCategories{{CID}}">
                           <i class="bi bi-caret-down-fill"></i>
                         </button>
@@ -55,7 +55,7 @@
                     <div id="collapseCategories{{CID}}" class="collapse" aria-labelledby="heading{{CID}}" data-parent="#accordionCategories2">
                       <div class="list-group list-group-flush">
                         {{#each subCategories}}
-                          <a href="youtube.com" class="list-group-item list-group-item-action">
+                          <a href="/subcategory/{{SCID}}" class="list-group-item list-group-item-action">
                             {{SCName}}
                           </a>
                         {{/each}}
@@ -94,7 +94,7 @@
         </div>
 
         <!--Categories for lg responsive-->
-        <div class="col-lg-3 d-none d-lg-block" style="position: fixed; top:auto; left:150vh;">
+        <div class="col-lg-3 d-none d-lg-block">
           <div class="card mb-3">
             <div class="card-header text-white" style="background-color: darkTurquoise;">
               <h4>Chuyên mục</h4>
