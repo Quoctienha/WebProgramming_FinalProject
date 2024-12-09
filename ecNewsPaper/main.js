@@ -2,6 +2,7 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 
 import categoryService from './services/category.service.js';
+import postService from './services/post.service.js';
 /*
 //Xác định thư mục hiện tại của tệp
 import { dirname, format } from 'path';
@@ -45,9 +46,14 @@ app.use( async function(req,res,next){
 });
 
 //route
-app.get('/', function(req, res) {
-  //res.send('Hello ecNewsPaper')
-  res.render('home')
+app.get('/', async function(req, res) {
+  const top3post = await postService.top3PostsLastWeek();
+  const lastPost = top3post.pop();
+  res.render('home',{
+    top2post: top3post,
+    lastPost:lastPost
+  });
+  //console.log(top3post);
 })
 
 app.listen(port, function() {

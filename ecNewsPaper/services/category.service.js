@@ -13,8 +13,8 @@ export default{
     {
         return db('posts').where('SCID',SCID);
     },
-    findPostsByPostID(PostID)
-    {
-        return db('posts').where('PostID',PostID);
+    findPostsByPostID(PostID) {
+        return db('posts').where('PostID', PostID);
     },
+    
 }
