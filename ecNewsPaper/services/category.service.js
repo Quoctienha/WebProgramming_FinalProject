@@ -1,20 +1,23 @@
 import db from '../utils/db.js';
 
 export default{
+    //Categories
     findAllCategories() {
        return db('categories');
     },
 
-    
-    findSubCategoriesByID(CID){
+    findCategoriesByCID(CID){
+        return db('categories').where('CID', CID).first();
+
+    },
+
+    //sub Categories
+    findSubCategoriesBySCID(SCID) {
+        return db('subcategories').where('SCID', SCID).first();
+    },
+
+    findSubCategoriesByCID(CID){
         return db('subcategories').where('CID', CID);
-    },
-    findPostsByCID(SCID)
-    {
-        return db('posts').where('SCID',SCID);
-    },
-    findPostsByPostID(PostID) {
-        return db('posts').where('PostID', PostID);
     },
     
 }

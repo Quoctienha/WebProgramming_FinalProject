@@ -3,6 +3,9 @@ import { engine } from 'express-handlebars';
 
 import categoryService from './services/category.service.js';
 import postService from './services/post.service.js';
+
+import postsRouter from './routes/posts.route.js';
+
 /*
 //Xác định thư mục hiện tại của tệp
 import { dirname, format } from 'path';
@@ -34,7 +37,7 @@ app.use( async function(req,res,next){
     categories.push({
       CID: categorieslV1[i].CID,
       CName: categorieslV1[i].CName,
-      subCategories: await categoryService.findSubCategoriesByID(categorieslV1[i].CID)
+      subCategories: await categoryService.findSubCategoriesByCID(categorieslV1[i].CID)
     });
   
    
@@ -49,56 +52,32 @@ app.use( async function(req,res,next){
 app.get('/', async function(req, res) {
   const top3post = await postService.top3PostsLastWeek();
   const lastPost = top3post.pop();
+  const top10MostView = await postService.top10MostView();
+  const top10NewestPost = await postService.top10NewestPost();
+  const top10CategoriesByView = await postService.top10CategoriesByView();
+  const newestPostsOfTop10Cat = [];
+
+  for(let i=0; i<top10CategoriesByView.length;i++){
+    newestPostsOfTop10Cat.push(await postService.findNewestPostByCID(top10CategoriesByView[i].CID));
+  }
+
   res.render('home',{
     top2post: top3post,
-    lastPost:lastPost
+    lastPost: lastPost,
+    top10MostView: top10MostView,
+    top10NewestPost: top10NewestPost,
+    newestPostsOfTop10Cat: newestPostsOfTop10Cat
   });
-  //console.log(top3post);
+  //console.log(top10CategoriesByView);
+  //console.log(newestPostsOfTop10Cat);
 })
+
+app.use('/posts', postsRouter);
 
 app.listen(port, function() {
   console.log(`ecNewsPaper app listening at http://localhost:${port}`)
-})
-app.get('/subcategory/:id', async function (req, res) {
-  const subCategoryId = req.params.id;
-  const posts = await categoryService.findPostsByCID(subCategoryId);
-  
-  res.render('page_layouts', {
-    title: `Subcategory ${subCategoryId}`,
-    content: `Posts for Subcategory ${subCategoryId}`,
-    posts,
-  });
 });
 
 
-app.get('/subcategory/:id', async function (req, res) {
-  const subCategoryId = req.params.id;
-  const posts = await categoryService.findPostsByCID(subCategoryId);
 
-  res.render('page_layouts', {
-    title: `Subcategory ${subCategoryId}`,
-    content: `Posts for Subcategory ${subCategoryId}`,
-    posts,
-    layout: 'main_layout', // Explicitly set the layout here
-  });
-});
-app.get('/post/:id', async function (req, res) {
-  const postId = req.params.id;
-  
-  // Fetch the post from the database by PostID
-  const post = await categoryService.findPostsByPostID(postId);
 
-  if (!post || post.length === 0) {
-    return res.status(404).send('Post not found');
-  }
-
-  // Assuming post is an array and you want the first element
-  const postData = post[0];
-
-  res.render('post_details', {
-    PostTitle: postData.PostTitle,   // Pass PostTitle
-    Content: postData.Content,       // Pass Content
-    SCID: postData.SCID,             // Pass SCID for the "Back to Subcategory" link
-    title: postData.PostTitle,       // Pass the title for the page
-  });
-});
