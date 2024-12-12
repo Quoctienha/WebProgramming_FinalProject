@@ -27,8 +27,14 @@
                                 </span>  
                             {{else}}
                             {{/if}}                                                    
-                          </h5>                                                                          
+                          </h5>      
+                          <p class="card-text h5">Chuyên Mục:
+                            <a href="/posts/byCategory?id={{lastPost.CID}}" class="badge badge-info ">{{lastPost.CName}}</a>
+                            <a href="/posts/bySubcategory?id={{lastPost.SCID}}" class="badge badge-info ">{{lastPost.SCName}}</a>
+                          </p> 
+                                                                                           
                           <p class="card-text">{{lastPost.SumContent}}</p>
+                          <p class="card-text">{{lastPost.TimePublic}}</p>
                         </div>
                     </div>
     
@@ -53,7 +59,12 @@
                             {{else}}
                             {{/if}}                                                   
                           </h5>                                                                          
+                          <p class="card-text h5">Chuyên Mục:
+                            <a href="/posts/byCategory?id={{CID}}" class="badge badge-info ">{{CName}}</a>
+                            <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
+                          </p>                                                                 
                           <p class="card-text">{{SumContent}}</p>
+                          <p class="card-text">{{TimePublic}}</p>
                           
                         </div>
                     </div>
@@ -106,6 +117,10 @@
                       {{else}}
                       {{/if}}
                     </h5>
+                    <p class="card-text h5">Chuyên Mục:
+                        <a href="/posts/byCategory?id={{CID}}" class="badge badge-info ">{{CName}}</a>
+                        <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
+                    </p> 
                     <p class="card-text">{{SumContent}}</p>
                     <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
                   </div>
@@ -122,21 +137,34 @@
    <!--Pagination-->
     <nav aria-label="Page navigation example">
   <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
+    <!-- Nút Previous -->
+    <li class="page-item {{#if (Equal this.current_pageMV 1)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="?pageMV={{Decrement this.current_pageMV}}&pageNP={{current_pageNP}}&pageTC={{current_pageTC}}" >
+        Previous
       </a>
     </li>
-    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
+      <!-- Các số trang -->
+      {{#each this.pageNumbersMV}}
+      {{#if active}}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{value}}</a>
+      </li>
+      {{else}}
+      <li class="page-item">
+        <a class="page-link" href="?pageMV={{value}}&pageNP={{../current_pageNP}}&pageTC={{../current_pageTC}}">{{value}}</a>
+      </li>
+      {{/if}}
+      {{/each}}
+      <!--Nút next-->
+      <li class="page-item {{#if (Equal this.current_pageMV totalPages)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="?pageMV={{Increment this.current_pageMV}}&pageNP={{current_pageNP}}&pageTC={{current_pageTC}}" >
+        Next
       </a>
     </li>
-  </ul>
-</nav>
+    </ul>
+    </nav>
   </div>
 </div>
 
@@ -168,6 +196,10 @@
                       {{else}}
                       {{/if}}
                     </h5>
+                    <p class="card-text h5">Chuyên Mục:
+                        <a href="/posts/byCategory?id={{CID}}" class="badge badge-info ">{{CName}}</a>
+                        <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
+                    </p>  
                     <p class="card-text">{{SumContent}}</p>
                     <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
                   </div>
@@ -182,21 +214,33 @@
     <!--Pagination-->
     <nav aria-label="Page navigation example">
   <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
+      <!-- Nút Previous -->
+    <li class="page-item {{#if (Equal this.current_pageNP 1)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="?pageMV={{current_pageMV}}&pageNP={{Decrement this.current_pageNP}}&pageTC={{current_pageTC}}" >
+        Previous
       </a>
     </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
+      {{#each this.pageNumbersNP}}
+      {{#if active}}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{value}}</a>
+      </li>
+      {{else}}
+      <li class="page-item">
+        <a class="page-link" href="?pageMV={{../current_pageMV}}&pageNP={{value}}&pageTC={{../current_pageTC}}">{{value}}</a>
+      </li>
+      {{/if}}
+      {{/each}}
+      <!--Nút next-->
+      <li class="page-item {{#if (Equal this.current_pageNP totalPages)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="?pageMV={{current_pageMV}}&pageNP={{Increment this.current_pageNP}}&pageTC={{current_pageTC}}" >
+        Next
       </a>
     </li>
-  </ul>
-</nav>
+    </ul>
+    </nav>
   </div>
 </div>
 
@@ -228,6 +272,10 @@
                       {{else}}
                       {{/if}}
                     </h5>
+                    <p class="card-text h5">Chuyên Mục:
+                        <a href="/posts/byCategory?id={{CID}}" class="badge badge-info ">{{CName}}</a>
+                        <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
+                    </p>  
                     <p class="card-text">{{SumContent}}</p>
                     <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
                   </div>
@@ -242,21 +290,33 @@
     <!--Pagination-->
     <nav aria-label="Page navigation example">
   <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
+      <!-- Nút Previous -->
+    <li class="page-item {{#if (Equal this.current_pageTC 1)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="?pageMV={{current_pageMV}}&pageNP={{current_pageNP}}&pageTC={{Decrement this.current_pageTC}}" >
+        Previous
       </a>
     </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
+      {{#each this.pageNumbersTC}}
+      {{#if active}}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{value}}</a>
+      </li>
+      {{else}}
+      <li class="page-item">
+        <a class="page-link" href="?pageMV={{../current_pageMV}}&pageNP={{../current_pageNP}}&pageTC={{value}}">{{value}}</a>
+      </li>
+      {{/if}}
+      {{/each}}
+      <!--Nút next-->
+      <li class="page-item {{#if (Equal this.current_pageTC totalPages)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="?pageMV={{current_pageMV}}&pageNP={{current_pageNP}}&pageTC={{Increment this.current_pageTC}}" >
+        Next
       </a>
     </li>
-  </ul>
-</nav>
+    </ul>
+    </nav>
   </div>
 </div>
 
