@@ -1,6 +1,8 @@
 import express from 'express';
 import postService from "../services/post.service.js";
 import categoryService from "../services/category.service.js";
+import commentService from '../services/comment.service.js';
+import moment from 'moment';
 
 const router = express.Router();
 
@@ -27,6 +29,10 @@ router.get('/bySubcategory', async function (req, res) {
   }
 
   const posts = await postService.findPostsBySCID(subCategoryId, limit, offset);
+  // Định dạng thời gian cho từng post
+  posts.forEach(post => {
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  });
   res.render('vwPost/byCat', {
     title: subCategory.SCName,
     pageNumbers:pageNumbers,
@@ -61,6 +67,10 @@ router.get('/byCategory', async function( req, res) {
       });
   }
   const posts = await postService.findPostsByCID(categoryId, limit, offset);
+  // Định dạng thời gian cho từng post
+  posts.forEach(post => {
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  });
   res.render('vwPost/byCat', {
     title: category.CName,
     pageNumbers:pageNumbers,
@@ -75,16 +85,66 @@ router.get('/byCategory', async function( req, res) {
   
 })
 
+//Note: không gọi trực tiếp /detail nếu không cần thiết, gọi /IncreaseView để tăng view cho post
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+    const limit = parseInt(2);
+    const totalComments = await commentService.countByPostID(postId);
+    const nPages = Math.ceil(totalComments.total / limit);
+    //current page
+    const current_page =  Math.max(1, parseInt(req.query.page) || 1);
+    //offset
+    const offset = (current_page - 1) * limit;  
+    // Xác định dải trang hiển thị
+    const startPage = Math.max(1, current_page - 1); // Trang bắt đầu
+    const endPage = Math.min(nPages, current_page + 1); // Trang kết thúc
 
-    //update view
-    await postService.IncreaseView(postId);
+    const pageNumbers = [];    
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push({
+        value: i,
+        active:i === +current_page
+      });
+    }
+
+    const comments = await commentService.findCommentByPostID(postId, limit, offset);
+    // Định dạng thời gian cho từng bình luận
+    comments.forEach(comment => {
+      comment.Date = moment(comment.Date).format('DD/MM/YYYY HH:mm:ss');
+    });
     
     res.render('vwPost/detail', {
-      post: post
+      post: post,
+      current_page:current_page,
+      pageNumbers: pageNumbers,
+      needPagination: nPages > 1,
+      totalPages: nPages,
+      comments: comments
     });
+});
+
+router.get('/IncreaseView', async function( req, res) {
+  const postId = req.query.id || 0;
+  //update view
+  await postService.IncreaseView(postId);
+   // Chuyển hướng tới trang chi tiết bài viết
+   res.redirect(`/posts/detail?id=${postId}`);
+});
+
+router.post('/addComment', async function(req, res) {
+  const PostID = req.body.PostID;
+  const UID = req.body.UID;
+  const Comment = req.body.Comment;  
+
+  // Lấy thời gian hiện tại với moment
+  const Date = moment().format('YYYY-MM-DD HH:mm:ss');
+
+  const entity = { UID, PostID, Comment, Date};
+
+  const ret = await commentService.add(entity);
+  res.redirect(`/posts/detail?id=${PostID}`);
 });
 
 

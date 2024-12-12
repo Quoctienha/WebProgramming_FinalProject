@@ -37,6 +37,7 @@
         <!-- Categories (small screens) -->
         <div class="d-block d-lg-none">
           <button class="btn btn-primary pl-0" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <i class="bi bi-bookmarks-fill"></i>
             Chuyên mục
           </button>
           <div class="collapse" id="collapseExample">
@@ -88,23 +89,29 @@
     <!-- Main Content -->
     <div class="container-fluid">
       <div class="row">
-        <!-- Main content area for lg screen-->
-        <div class="col-lg-9 d-none d-lg-block" style="height: 86vh; overflow-y: auto;">
+        <!-- Main content area for xl screen-->
+        <div class="col-sm-9 d-none d-xl-block " style="height: 86vh; overflow-y: auto;">
           {{{body}}}
         </div>
-
-        <!-- Main content area for < lg screen-->
+        <!-- Main content area for lg screen-->
+        <div class="col-sm-9 d-none d-lg-block d-xl-none " style="height: 93vh; overflow-y: auto;">
+          {{{body}}}
+        </div>
+        <!-- Main content area for smaller than lg screen-->   
         <div class="d-block d-lg-none">
           {{{body}}}
-        </div>
+        </div>    
 
         <!--Categories for lg responsive-->
-        <div class="col-lg-3 d-none d-lg-block">
+        <div class="col-sm-3 d-none d-lg-block">
           <div class="card mb-3">
             <div class="card-header text-white" style="background-color: darkTurquoise;">
-              <h4>Chuyên mục</h4>
+              <h4>
+                <i class="bi bi-bookmarks-fill"></i>
+                Chuyên mục
+              </h4>
             </div>
-            <div class="accordion" id="accordionCategories" style="height: 76vh; overflow-y: auto;">
+            <div class="accordion border-0" id="accordionCategories" style="height: 35rem; overflow-y: auto;">
               {{#each lcCategories}}
                 <div class="card">
                   <div class="card-header" id="heading{{CID}}">

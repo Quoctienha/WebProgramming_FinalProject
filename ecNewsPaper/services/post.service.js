@@ -53,7 +53,7 @@ export default{
         .join('categories', 'posts.CID', '=', 'categories.CID')
         .join('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
         .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
-        .where('posts.SCID',SCID).where('StatusPost', "Đã xuất bản").limit(limit).offset(offset);
+        .where('posts.SCID',SCID).where('StatusPost', "Đã xuất bản").orderBy('TimePublic', 'desc').limit(limit).offset(offset);
     },
 
     findPostsByPostID(PostID) {
@@ -69,7 +69,7 @@ export default{
         .join('categories', 'posts.CID', '=', 'categories.CID')
         .join('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
         .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
-        .where('posts.CID',CID).where('StatusPost', "Đã xuất bản").limit(limit).offset(offset);
+        .where('posts.CID',CID).where('StatusPost', "Đã xuất bản").orderBy('TimePublic', 'desc').limit(limit).offset(offset);
     },
 
     countBySubCatId(SCID) {

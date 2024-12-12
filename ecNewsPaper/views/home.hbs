@@ -14,10 +14,10 @@
                   <div class="carousel-item active">
                     <!--thứ muốn hiện lên-->
                     <div class="card" >
-                         <img src="http://localhost:3030/static/imgs/posts/{{lastPost.PostID}}/{{lastPost.PostID}}_1.jpg" class="card-img-top " alt="..." style="height: 60vh;" >
+                         <img src="http://localhost:3030/static/imgs/posts/{{lastPost.PostID}}/{{lastPost.PostID}}_1.jpg" class="card-img-top " alt="..." style="height: 30rem;" >
                         <div class="card-body">
                           <h5 class="card-title">
-                            <a href="/posts/detail?id={{lastPost.PostID}}" class="card-link">                          
+                            <a href="/posts/IncreaseView?id={{lastPost.PostID}}" class="card-link">                          
                               {{lastPost.PostTitle}}
                             </a>
                             {{#if lastPost.Premium}}                                                             
@@ -34,7 +34,7 @@
                           </p> 
                                                                                            
                           <p class="card-text">{{lastPost.SumContent}}</p>
-                          <p class="card-text">{{lastPost.TimePublic}}</p>
+                          <p class="card-text"><small class="text-muted">Ngày công khai: {{lastPost.TimePublic}}</small></p>
                         </div>
                     </div>
     
@@ -48,7 +48,7 @@
                          <img src="http://localhost:3030/static/imgs/posts/{{PostID}}/{{PostID}}_1.jpg" class="card-img-top" alt="..." style="height: 60vh;">
                         <div class="card-body"> 
                           <h5 class="card-title">
-                            <a href="/posts/detail?id={{PostID}}" class="card-link">                          
+                            <a href="/posts/IncreaseView?id={{PostID}}" class="card-link">                          
                                 {{PostTitle}}
                             </a>
                             {{#if Premium}}                                                             
@@ -64,7 +64,7 @@
                             <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
                           </p>                                                                 
                           <p class="card-text">{{SumContent}}</p>
-                          <p class="card-text">{{TimePublic}}</p>
+                          <p class="card-text"><small class="text-muted">Ngày công khai: {{TimePublic}}</small></p>
                           
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                 <div class="col-sm-8">
                   <div class="card-body text-left">
                     <h5 class="card-title">
-                      <a href="/posts/detail?id={{PostID}}" class="card-link">{{PostTitle}}</a>
+                      <a href="/posts/IncreaseView?id={{PostID}}" class="card-link">{{PostTitle}}</a>
                       {{#if Premium}}                                                             
                           <span class="badge badge-pill badge-warning">
                             Premium
@@ -122,7 +122,7 @@
                         <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
                     </p> 
                     <p class="card-text">{{SumContent}}</p>
-                    <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
+                    <p class="card-text"><small class="text-muted">Ngày công khai: {{TimePublic}}</small></p>
                   </div>
                 </div>
               </div>
@@ -187,7 +187,7 @@
                 <div class="col-sm-8">
                   <div class="card-body text-left">
                     <h5 class="card-title">
-                      <a href="/posts/detail?id={{PostID}}" class="card-link">{{PostTitle}}</a>
+                      <a href="/posts/IncreaseView?id={{PostID}}" class="card-link">{{PostTitle}}</a>
                       {{#if Premium}}                                                             
                           <span class="badge badge-pill badge-warning">
                             Premium
@@ -201,7 +201,7 @@
                         <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
                     </p>  
                     <p class="card-text">{{SumContent}}</p>
-                    <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
+                    <p class="card-text"><small class="text-muted">Ngày công khai: {{TimePublic}}</small></p>
                   </div>
                 </div>
               </div>
@@ -263,7 +263,7 @@
                 <div class="col-sm-8">
                   <div class="card-body text-left">
                     <h5 class="card-title">
-                      <a href="/posts/detail?id={{PostID}}" class="card-link">{{PostTitle}}</a>
+                      <a href="/posts/IncreaseView?id={{PostID}}" class="card-link">{{PostTitle}}</a>
                       {{#if Premium}}                                                             
                           <span class="badge badge-pill badge-warning">
                             Premium
@@ -277,7 +277,7 @@
                         <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
                     </p>  
                     <p class="card-text">{{SumContent}}</p>
-                    <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
+                    <p class="card-text"><small class="text-muted">Ngày công khai: {{TimePublic}}</small></p>
                   </div>
                 </div>
               </div>

@@ -15,7 +15,7 @@
                 <div class="col-sm-8">
                   <div class="card-body text-left">
                     <h5 class="card-title">
-                      <a href="/posts/detail?id={{PostID}}" class="card-link">{{PostTitle}}</a>
+                      <a href="/posts/IncreaseView?id={{PostID}}" class="card-link">{{PostTitle}}</a>
                       {{#if Premium}}                                                             
                           <span class="badge badge-pill badge-warning">
                             Premium
@@ -29,7 +29,7 @@
                         <a href="/posts/bySubcategory?id={{SCID}}" class="badge badge-info ">{{SCName}}</a>
                     </p>  
                     <p class="card-text">{{SumContent}}</p>
-                    <p class="card-text"><small class="text-muted">{{TimePublic}}</small></p>
+                    <p class="card-text"><small class="text-muted">Ngày công khai: {{TimePublic}}</small></p>
                   </div>
                 </div>
               </div>

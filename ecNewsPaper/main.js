@@ -1,5 +1,6 @@
 import express from 'express';
 import { engine } from 'express-handlebars';
+import moment from 'moment';
 
 import categoryService from './services/category.service.js';
 import postService from './services/post.service.js';
@@ -37,6 +38,8 @@ app.engine('hbs', engine({
 }));
 app.set('view engine', 'hbs');
 app.set('views', './views');
+// Middleware xử lý dữ liệu từ form (x-www-form-urlencoded)
+app.use(express.urlencoded({ extended: true }));
 
 //khai báo các đường dẫn cho tập tin tĩnh
 //http://localhost:3030/static/imgs/1.jpg
@@ -66,6 +69,10 @@ app.use( async function(req,res,next){
 app.get('/', async function(req, res) {
   //top 3 posts of last week
   const top3post = await postService.top3PostsLastWeek();
+  // Định dạng thời gian cho từng post
+  top3post.forEach(post => {
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  });
   const lastPost = top3post.pop();
 
   const limit = parseInt(2);
@@ -81,13 +88,25 @@ app.get('/', async function(req, res) {
   const offsetTC =(current_pageTC - 1) * limit; // top 10 Categories By Views
 
   const top10MostView = await postService.top10MostView(limit, offsetMV);
+  // Định dạng thời gian cho từng post
+  top10MostView.forEach(post => {
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  });
   const top10NewestPost = await postService.top10NewestPost(limit, offsetNP);
+  // Định dạng thời gian cho từng post
+  top10NewestPost.forEach(post => {
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  });
   const top10CategoriesByView = await postService.top10CategoriesByView(limit, offsetTC);
   const newestPostsOfTop10Cat = [];
 
   for(let i=0; i<top10CategoriesByView.length;i++){
     newestPostsOfTop10Cat.push(await postService.findNewestPostByCID(top10CategoriesByView[i].CID));
   }
+  // Định dạng thời gian cho từng post
+  newestPostsOfTop10Cat.forEach(post => {
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  });
 
   //page numbers
   const pageNumbersMV = [];
