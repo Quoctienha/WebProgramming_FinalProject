@@ -1,0 +1,154 @@
+{{#section 'css'}}
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+{{/section}}
+
+{{#section 'js'}}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script>
+  // Cài đặt datetimepicker
+  $('#txtDOB').datetimepicker({
+    timepicker: false,
+    format: 'd/m/Y',
+    mask: true
+  });
+
+  // Kiểm tra ràng buộc dữ liệu
+  $('#frmRegister').on('submit', function (e) {
+    e.preventDefault(); // Ngăn hành vi mặc định
+
+    // Lấy giá trị từ các trường
+    const username = $('#txtUsername').val().trim();
+    const password = $('#txtPassword').val().trim();
+    const confirmPassword = $('#txtConfirmPassword').val().trim();
+    const name = $('#txtName').val().trim();
+    const email = $('#txtEmail').val().trim();
+    const dob = $('#txtDOB').val().trim();
+
+    // Kiểm tra từng trường
+    if (username.length === 0) {
+      alert('Username is required.');
+      return;
+    }
+
+    $.getJSON(`/account/is-available?username=${username}`, function (data) {
+      if (!data) {
+        alert('Username is not available.');
+        return;
+      }
+
+      if (password.length === 0) {
+        alert('Password is required.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      if (name.length === 0) {
+        alert('Full name is required.');
+        return;
+      }
+
+      if (email.length === 0) {
+        alert('Email is required.');
+        return;
+      }
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      if (!validateDOB(dob)) {
+        alert('Please enter a valid Date of Birth in DD/MM/YYYY format.');
+        return;
+      }else {
+       // Nếu hợp lệ, submit form
+        $('#frmRegister').off('submit').submit();
+      }
+    });
+  });
+
+  function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+
+  function validateDOB(dob) {
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    return regex.test(dob);
+  }
+
+</script>
+{{/section}}
+
+
+<form id="frmRegister" action="" method="post" class="needs-validation" novalidate>
+  <div class="card shadow">
+    <h5 class="card-header bg-primary text-white">
+      <i class="bi bi-person-plus-fill"></i> Account Registration Form
+    </h5>
+    <div class="card-body">
+      <h5 class="text-primary mb-3">Account Information</h5>
+      
+      <div class="form-group mb-3">
+        <label for="txtUsername" class="form-label">Username</label>
+        <input type="text" name="username" id="txtUsername" class="form-control" placeholder="Enter your username" required>
+        <div class="invalid-feedback">
+          Please enter a username.
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="txtPassword" class="form-label">Password</label>
+        <input type="password" name="raw_password" id="txtPassword" class="form-control" placeholder="Enter your password" required>
+        <div class="invalid-feedback">
+          Please enter a password.
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="txtConfirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" name="confirm_password" id="txtConfirmPassword" class="form-control" placeholder="Re-enter your password" required>
+        <div class="invalid-feedback">
+          Please confirm your password.
+        </div>
+      </div>
+
+      <h5 class="text-primary mb-3">Personal Information</h5>
+      
+      <div class="form-group mb-3">
+        <label for="txtName" class="form-label">Name</label>
+        <input type="text" name="name" id="txtName" class="form-control" placeholder="Enter your full name" required>
+        <div class="invalid-feedback">
+          Please enter your name.
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="txtEmail" class="form-label">Email</label>
+        <input type="email" name="email" id="txtEmail" class="form-control" placeholder="Enter your email" required>
+        <div class="invalid-feedback">
+          Please enter a valid email address.
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="txtDOB" class="form-label">Date of Birth</label>
+        <input type="text" name="raw_dob" id="txtDOB" class="form-control" placeholder="DD/MM/YYYY" required>
+        <div class="invalid-feedback">
+          Please select your date of birth.
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-footer text-center">
+      <button type="submit" class="btn btn-primary btn-lg">
+        <i class="bi bi-check-circle-fill"></i> Register
+      </button>
+    </div>
+  </div>
+</form>
