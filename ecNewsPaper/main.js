@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import categoryService from './services/category.service.js';
 import postService from './services/post.service.js';
+import tagService from './services/tag.service.js';
 
 import postsRouter from './routes/posts.route.js';
 
@@ -69,10 +70,28 @@ app.use( async function(req,res,next){
 app.get('/', async function(req, res) {
   //top 3 posts of last week
   const top3post = await postService.top3PostsLastWeek();
+  // Duyệt qua từng bài viết và thêm tag vào mỗi bài viết
+for (let post of top3post) {
   // Định dạng thời gian cho từng post
-  top3post.forEach(post => {
+  post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+  // Truy vấn các tag của bài viết
+  const tags = await tagService.findTagByPostID(post.PostID); 
+  // Thêm tags vào bài viết
+  post.Tags = tags.map(tag => ({
+    TagID: tag.TagID,
+    TName: tag.TName
+  }));
+}
+  // Định dạng thời gian cho từng post
+  /*top3post.forEach(async post => {
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
+    // Thêm tags vào bài viết
+    const top3postTags = await tagService.findTagByPostID(post.PostID);
+    post.Tags = top3postTags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+  });*/
   const lastPost = top3post.pop();
 
   const limit = parseInt(2);
@@ -88,25 +107,47 @@ app.get('/', async function(req, res) {
   const offsetTC =(current_pageTC - 1) * limit; // top 10 Categories By Views
 
   const top10MostView = await postService.top10MostView(limit, offsetMV);
-  // Định dạng thời gian cho từng post
-  top10MostView.forEach(post => {
+  for (let post of top10MostView) {
+    // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+  }
+
   const top10NewestPost = await postService.top10NewestPost(limit, offsetNP);
-  // Định dạng thời gian cho từng post
-  top10NewestPost.forEach(post => {
+  for (let post of top10NewestPost) {
+    // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+  }
+
   const top10CategoriesByView = await postService.top10CategoriesByView(limit, offsetTC);
   const newestPostsOfTop10Cat = [];
-
   for(let i=0; i<top10CategoriesByView.length;i++){
     newestPostsOfTop10Cat.push(await postService.findNewestPostByCID(top10CategoriesByView[i].CID));
   }
-  // Định dạng thời gian cho từng post
-  newestPostsOfTop10Cat.forEach(post => {
+  for (let post of newestPostsOfTop10Cat) {
+    // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+  }
 
   //page numbers
   const pageNumbersMV = [];

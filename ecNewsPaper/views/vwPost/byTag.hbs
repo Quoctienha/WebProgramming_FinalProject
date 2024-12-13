@@ -1,6 +1,9 @@
 <div class="card text-center">
   <div class="card-header">
-    <h2>{{title}}</h2>
+    <h2>
+        <i class="bi bi-tags"></i>Tags:
+        {{title}}
+    </h2>
   </div>
   <div class="card-body">
     {{#if posts.length}}
@@ -61,7 +64,7 @@
     <!-- Nút Previous -->
     <li class="page-item {{#if (Equal this.current_page 1)}}disabled{{/if}}">
       <a class="page-link" 
-         href="/posts{{#if isBySubCat}}/bySubcategory{{else}}/byCategory{{/if}}?id={{catID}}&page={{Decrement this.current_page}}" >
+         href="/posts/byTag?id={{TagID}}&page={{Decrement this.current_page}}" >
         Previous
       </a>
     </li>
@@ -73,14 +76,14 @@
       </li>
       {{else}}
       <li class="page-item">
-        <a class="page-link" href="/posts{{#if ../isBySubCat}}/bySubcategory{{else}}/byCategory{{/if}}?id={{../catID}}&page={{value}}">{{value}}</a>
+        <a class="page-link" href="/posts/byTag?id={{../TagID}}&page={{value}}">{{value}}</a>
       </li>
       {{/if}}
       {{/each}}
       <!--Nút next-->
       <li class="page-item {{#if (Equal this.current_page totalPages)}}disabled{{/if}}">
       <a class="page-link" 
-         href="/posts{{#if isBySubCat}}/bySubcategory{{else}}/byCategory{{/if}}?id={{catID}}&page={{Increment this.current_page}}" >
+         href="/posts/byTag?id={{TagID}}&page={{Increment this.current_page}}" >
         Next
       </a>
     </li>
@@ -89,6 +92,5 @@
   {{/if}}
   </div>
 </div>
-
 
 

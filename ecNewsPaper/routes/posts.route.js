@@ -2,6 +2,7 @@ import express from 'express';
 import postService from "../services/post.service.js";
 import categoryService from "../services/category.service.js";
 import commentService from '../services/comment.service.js';
+import tagService from '../services/tag.service.js';
 import moment from 'moment';
 
 const router = express.Router();
@@ -29,10 +30,17 @@ router.get('/bySubcategory', async function (req, res) {
   }
 
   const posts = await postService.findPostsBySCID(subCategoryId, limit, offset);
-  // Định dạng thời gian cho từng post
-  posts.forEach(post => {
-    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
+  for (let post of posts) {
+      // Định dạng thời gian cho từng post
+      post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+      // Truy vấn các tag của bài viết
+      const tags = await tagService.findTagByPostID(post.PostID); 
+      // Thêm tags vào bài viết
+      post.Tags = tags.map(tag => ({
+        TagID: tag.TagID,
+        TName: tag.TName
+      }));
+    }
   res.render('vwPost/byCat', {
     title: subCategory.SCName,
     pageNumbers:pageNumbers,
@@ -67,10 +75,17 @@ router.get('/byCategory', async function( req, res) {
       });
   }
   const posts = await postService.findPostsByCID(categoryId, limit, offset);
-  // Định dạng thời gian cho từng post
-  posts.forEach(post => {
+  for (let post of posts) {
+    // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+  }
   res.render('vwPost/byCat', {
     title: category.CName,
     pageNumbers:pageNumbers,
@@ -83,13 +98,66 @@ router.get('/byCategory', async function( req, res) {
   });
 
   
-})
+});
 
+router.get('/byTag', async function(req, res) {
+  const tagID = req.query.id || 0;
+  const tag = await tagService.findTagBytagID(tagID);
+  const nRows = await tagService.countByTagId(tagID);
+  const limit = parseInt(2);
+  const nPages = Math.ceil(nRows.total / limit);
+  //current page
+  const current_page =  Math.max(1, parseInt(req.query.page) || 1);
+  //offset
+  const offset = (current_page - 1) * limit;  
+  // Xác định dải trang hiển thị
+  const startPage = Math.max(1, current_page - 1); // Trang bắt đầu
+  const endPage = Math.min(nPages, current_page + 1); // Trang kết thúc
+
+  const pageNumbers = [];    
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push({
+        value: i,
+        active:i === +current_page
+      });
+  }
+
+  const posts = await tagService.findPostByTagID(tagID, limit, offset);
+  for (let post of posts) {
+    // Định dạng thời gian cho từng post
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+   }
+   res.render('vwPost/byTag', {
+    title: tag.TName,
+    pageNumbers:pageNumbers,
+    needPagination: nPages > 1,
+    current_page: current_page,
+    posts: posts,
+    totalPages: nPages,
+    TagID: tagID,
+  });
+
+});
 //Note: không gọi trực tiếp /detail nếu không cần thiết, gọi /IncreaseView để tăng view cho post
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
+    // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
     const limit = parseInt(2);
     const totalComments = await commentService.countByPostID(postId);
     const nPages = Math.ceil(totalComments.total / limit);

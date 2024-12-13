@@ -5,9 +5,9 @@ export default{
     //search   
     top3PostsLastWeek(){
         return db('posts')
+        .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
         .join('categories', 'posts.CID', '=', 'categories.CID')
         .join('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
-        .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
         .where('StatusPost', "Đã xuất bản")
         .orderBy('view', 'desc')
         .orderBy('TimePublic', 'desc').limit(3);
