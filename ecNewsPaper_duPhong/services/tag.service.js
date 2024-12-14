@@ -3,16 +3,18 @@ import db from '../utils/db.js';
 export default{
     findTagByPostID(PostID){
         return db('post_tags')
-        .select('tag.*') // Chỉ lấy TagID và TName
-        .join('tag', 'post_tags.TagID', 'tag.TagID') // Join với bảng tags
+        .select('tag.*') 
+        .join('tag', 'post_tags.TagID', 'tag.TagID') 
         .where('post_tags.PostID', PostID);
       
     },
 
     findPostByTagID(tagId, limit, offset){
         return db('post_tags')
-        .select('posts.*',)
+        .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
         .join('posts', 'post_tags.PostID', 'posts.PostID')
+        .join('categories', 'posts.CID', '=', 'categories.CID')
+        .join('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
         .where('post_tags.TagID', tagId).limit(limit).offset(offset);
     },
 
