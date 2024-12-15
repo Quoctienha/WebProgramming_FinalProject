@@ -2,10 +2,7 @@ import express from 'express';
 import postService from "../services/post.service.js";
 import categoryService from "../services/category.service.js";
 import commentService from '../services/comment.service.js';
-<<<<<<< HEAD
 import tagService from '../services/tag.service.js';
-=======
->>>>>>> d81256e34f2c58bbf84262f547b0e71354aacebf
 import moment from 'moment';
 
 const router = express.Router();
@@ -33,7 +30,6 @@ router.get('/bySubcategory', async function (req, res) {
   }
 
   const posts = await postService.findPostsBySCID(subCategoryId, limit, offset);
-<<<<<<< HEAD
   for (let post of posts) {
       // Định dạng thời gian cho từng post
       post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
@@ -45,12 +41,6 @@ router.get('/bySubcategory', async function (req, res) {
         TName: tag.TName
       }));
     }
-=======
-  // Định dạng thời gian cho từng post
-  posts.forEach(post => {
-    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
->>>>>>> d81256e34f2c58bbf84262f547b0e71354aacebf
   res.render('vwPost/byCat', {
     title: subCategory.SCName,
     pageNumbers:pageNumbers,
@@ -85,7 +75,6 @@ router.get('/byCategory', async function( req, res) {
       });
   }
   const posts = await postService.findPostsByCID(categoryId, limit, offset);
-<<<<<<< HEAD
   for (let post of posts) {
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
@@ -97,12 +86,6 @@ router.get('/byCategory', async function( req, res) {
       TName: tag.TName
     }));
   }
-=======
-  // Định dạng thời gian cho từng post
-  posts.forEach(post => {
-    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-  });
->>>>>>> d81256e34f2c58bbf84262f547b0e71354aacebf
   res.render('vwPost/byCat', {
     title: category.CName,
     pageNumbers:pageNumbers,
@@ -115,7 +98,6 @@ router.get('/byCategory', async function( req, res) {
   });
 
   
-<<<<<<< HEAD
 });
 
 router.get('/byTag', async function(req, res) {
@@ -163,15 +145,10 @@ router.get('/byTag', async function(req, res) {
   });
 
 });
-=======
-})
-
->>>>>>> d81256e34f2c58bbf84262f547b0e71354aacebf
 //Note: không gọi trực tiếp /detail nếu không cần thiết, gọi /IncreaseView để tăng view cho post
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
-<<<<<<< HEAD
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
     // Truy vấn các tag của bài viết
@@ -181,9 +158,6 @@ router.get('/detail', async function (req, res) {
       TagID: tag.TagID,
       TName: tag.TName
     }));
-=======
-    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
->>>>>>> d81256e34f2c58bbf84262f547b0e71354aacebf
     const limit = parseInt(2);
     const totalComments = await commentService.countByPostID(postId);
     const nPages = Math.ceil(totalComments.total / limit);

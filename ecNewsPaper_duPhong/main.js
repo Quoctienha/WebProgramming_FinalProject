@@ -1,5 +1,6 @@
 import express from 'express';
 import { engine } from 'express-handlebars';
+import hbs_sections from 'express-handlebars-sections';
 import moment from 'moment';
 
 import categoryService from './services/category.service.js';
@@ -7,13 +8,14 @@ import postService from './services/post.service.js';
 import tagService from './services/tag.service.js';
 
 import postsRouter from './routes/posts.route.js';
+import accountRouter from './routes/account.route.js';
 
-/*
+
 //Xác định thư mục hiện tại của tệp
 import { dirname, format } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
-*/
+
 
 const app = express()
 const port = 3030
@@ -23,6 +25,8 @@ app.engine('hbs', engine({
   extname: 'hbs',
   defaultLayout: 'main_layout',
   helpers: {
+    section: hbs_sections(),
+
     Equal(a, b){
       return Number(a) === Number(b);
     },
@@ -200,6 +204,7 @@ for (let post of top3post) {
 })
 
 app.use('/posts', postsRouter);
+app.use('/account', accountRouter);
 
 app.listen(port, function() {
   console.log(`ecNewsPaper app listening at http://localhost:${port}`)
