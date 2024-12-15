@@ -9,19 +9,18 @@
                     </div>
                 </h4>
                 <div class="card-body p-0 ">
+                    {{#if showErrors}}
+                        <div class="alert alert-warning alert-dismissible fade show m-0" role="alert">
+                            <strong>Đăng nhập thất bại!</strong> Hãy kiểm tra lại <b>Tên đăng nhập</b> và <b>Mật khẩu</b>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {{/if}}
                     <div class="row p-0 m-0">
                         <!-- Login Form Section smaller than lg-->
                         <div class="col-12 d-block d-lg-none bg bg-light pt-3 mb-3">
                             <form method="post">
-                                {{#if showErrors}}
-                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        <strong>Đăng nhập thất bại!</strong> Hãy kiểm tra lại <b>Tên đăng nhập</b> và <b>Mật khẩu</b>
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-
-                                {{/if}}
                             <div class="form-group">
                                 <label for="txtUsername">Tên đăng nhập</label>
                                 <input type="text" class="form-control" id="txtUsername" name="username" placeholder="Tên đăng nhập"/>
@@ -46,15 +45,6 @@
                         <!-- Login Form Section for lg-->
                         <div class="col-6 d-none d-lg-block d-xl-none bg bg-light pt-2">
                             <form method="post">
-                                {{#if showErrors}}
-                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        <strong>Đăng nhập thất bại!</strong> Hãy kiểm tra lại <b>Tên đăng nhập</b> và <b>Mật khẩu</b>
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-
-                                {{/if}}
                             <div class="form-group">
                                 <label for="txtUsername">Tên đăng nhập</label>
                                 <input type="text" class="form-control" id="txtUsername" name="username" placeholder="Tên đăng nhập"/>
@@ -78,16 +68,7 @@
                         </div>
                         <!-- Login Form Section for xl-->
                         <div class="col-6 d-none d-xl-block bg bg-light pt-5">
-                            <form method="post">
-                                {{#if showErrors}}
-                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        <strong>Đăng nhập thất bại!</strong> Hãy kiểm tra lại <b>Tên đăng nhập</b> và <b>Mật khẩu</b>
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-
-                                {{/if}}
+                            <form method="post">                               
                             <div class="form-group">
                                 <label for="txtUsername">Tên đăng nhập</label>
                                 <input type="text" class="form-control" id="txtUsername" name="username" placeholder="Tên đăng nhập"/>
