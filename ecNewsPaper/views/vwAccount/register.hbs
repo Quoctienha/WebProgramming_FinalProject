@@ -14,13 +14,13 @@
         return;
       }
 
-      /*$.getJSON(`/account/is-available?user=${username}`, function (data) {
+      $.getJSON(`/account/is-available?username=${username}`, function (data) {
         if (data === false) {
           alert('Not available!');
         } else {
           $('#frmRegister').off('submit').submit();
         }
-      });*/
+      });
     });
 
     $('#txtDOB').datetimepicker({
@@ -29,7 +29,7 @@
       mask: true
     });
 
-    $('#txtUsername').select();
+    //$('#txtUsername').select();
   </script>
 {{/section}}
 
@@ -45,40 +45,40 @@
      </div>
     </h4>
     <div class="card-body">
-      <h5>Thông tin đăng nhập</h5>
+      <h5>Thông tin đăng nhập (bắt buộc)</h5>
       <div class="form-group">
         <label for="txtUsername">Tên đăng nhập</label>
         <input type="text" class="form-control" id="txtUsername" name="username" placeholder="Tên đăng nhập"/>
       </div>
       <div class="form-group">
         <label for="txtPassword">Mật khẩu</label>
-        <input type="password" class="form-control" id="txtPassword" name="password" placeholder="Mật khẩu"/>
+        <input type="password" class="form-control" id="txtPassword" name="raw_password" placeholder="Mật khẩu"/>
       </div>
       <div class="form-group mb-5">
         <label for="txtConfirm">Xác nhận lại mật khẩu</label>
-        <input type="password" class="form-control" id="txtConfirm" placeholder="Nhập lại mật khẩu của bạn"/>
+        <input type="password" class="form-control" name="confirm_password" id="txtConfirm" placeholder="Nhập lại mật khẩu của bạn"/>
       </div>
     <hr>
       <h5>Hồ sơ người dùng</h5>
       <div class="form-group">
-        <label for="txtName">Họ và tên</label>
-        <input type="text" class="form-control" id="txtName" name="name" placeholder="Họ tên đầy đủ của bạn"/>
+        <label for="txtFullname">Họ và tên</label>
+        <input type="text" class="form-control" id="txtFullname" name="Fullname" placeholder="Họ tên đầy đủ của bạn"/>
       </div>
       <div class="form-group">
-        <label for="txtPhone">Địa chỉ (Không bắt buộc)</label>
-        <input type="text" class="form-control" id="txtPhone" name="phone" placeholder="Địa chỉ"/>
+        <label for="txtAddress">Địa chỉ</label>
+        <input type="text" class="form-control" id="txtAddress" name="Address" placeholder="Địa chỉ"/>
       </div>
       <div class="form-group">
         <label for="txtPhone">Số điện thoại</label>
-        <input type="text" class="form-control" id="txtPhone" name="phone" placeholder="Số điện thoại"/>
+        <input type="text" class="form-control" id="txtPhone" name="Phone" placeholder="Số điện thoại"/>
       </div>
       <div class="form-group">
-        <label for="txtEmail">Email</label>
-        <input type="text" class="form-control" id="txtEmail" name="email" placeholder="Email"/>
+        <label for="txtEmail">Email (bắt buộc)</label>
+        <input type="text" class="form-control" id="txtEmail" name="Email" placeholder="Email"/>
       </div>
       <div class="form-group">
         <label for="txtDOB">Ngày sinh</label>
-        <input type="text" class="form-control" id="txtDOB" name="dob" />
+        <input type="text" class="form-control" id="txtDOB" name="raw_dob" />
       </div>
     </div>
     <div class="card-footer text-right">

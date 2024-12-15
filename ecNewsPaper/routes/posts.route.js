@@ -145,6 +145,7 @@ router.get('/byTag', async function(req, res) {
   });
 
 });
+
 //Note: không gọi trực tiếp /detail nếu không cần thiết, gọi /IncreaseView để tăng view cho post
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;

@@ -12,9 +12,9 @@ import accountRouter from './routes/account.route.js';
 
 
 //Xác định thư mục hiện tại của tệp
-import { dirname, format } from 'path';
-import { fileURLToPath } from 'url';
-const __dirname = dirname(fileURLToPath(import.meta.url));
+//import { dirname, format } from 'path';
+//import { fileURLToPath } from 'url';
+//const __dirname = dirname(fileURLToPath(import.meta.url));
 
 
 const app = express()
