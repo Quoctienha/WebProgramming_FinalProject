@@ -5,6 +5,9 @@ import commentService from '../services/comment.service.js';
 import tagService from '../services/tag.service.js';
 import moment from 'moment';
 
+//middlewares
+import auth from '../middlewares/auth.mdw.js';
+
 const router = express.Router();
 
 router.get('/bySubcategory', async function (req, res) {
@@ -202,7 +205,7 @@ router.get('/IncreaseView', async function( req, res) {
    res.redirect(`/posts/detail?id=${postId}`);
 });
 
-router.post('/addComment', async function(req, res) {
+router.post('/addComment',auth, async function(req, res) {
   const PostID = req.body.PostID;
   const UID = req.body.UID;
   const Comment = req.body.Comment;  
@@ -216,5 +219,8 @@ router.post('/addComment', async function(req, res) {
   res.redirect(`/posts/detail?id=${PostID}`);
 });
 
+router.get('/addComment', async function(req, res) {
+  res.redirect(`/`);
+});
 
 export default router;
