@@ -2,6 +2,7 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 import hbs_sections from 'express-handlebars-sections';
 import moment from 'moment';
+import session from 'express-session';
 
 import categoryService from './services/category.service.js';
 import postService from './services/post.service.js';
@@ -43,6 +44,13 @@ app.engine('hbs', engine({
 }));
 app.set('view engine', 'hbs');
 app.set('views', './views');
+app.set('trust proxy', 1); // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  //cookie: {}
+}));
 // Middleware xử lý dữ liệu từ form (x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,6 +58,15 @@ app.use(express.urlencoded({ extended: true }));
 //http://localhost:3030/static/imgs/1.jpg
 app.use('/static', express.static('static'));
 
+app.use(async function (req, res, next) {
+  if (!req.session.auth) {
+    req.session.auth = false;
+  }
+
+  res.locals.auth = req.session.auth;
+  res.locals.authUser = req.session.authUser;
+  next();
+});
 //middleware
 app.use( async function(req,res,next){
   const categorieslV1 = await categoryService.findAllCategories();

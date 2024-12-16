@@ -44,7 +44,8 @@ router.post('/login', async function(req, res) {
     
     req.session.auth = true;
     req.session.authUser = user;
-
+    //chỉnh hiện ngày sinh
+    req.session.authUser.DayOfBirth = moment(req.session.authUser.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
     const retUrl = req.session.retUrl || '/';
     res.redirect(retUrl);
 });
@@ -77,33 +78,84 @@ router.post('/register', async function(req, res){
 
 })
 
+//profile
 router.get('/profile', auth, function (req, res) {
     res.render('vwAccount/profile', {
       layout: 'account_layout',
       user: req.session.authUser
     });
 });
-  
+
+//chỉnh sửa profile
+router.get('/patch', async function(req, res){
+  res.render('vwAccount/editProfile', {
+    layout: 'account_layout',
+    user: req.session.authUser
+  });
+});
+
+router.post('/patch', async function(req, res){
+  const id =  req.session.authUser.UserID;
+  const changes = {
+      Fullname: req.body.Fullname,
+      Address: req.body.Address,
+      Phone: req.body.Phone,
+      Email: req.body.Email,
+      DayOfBirth: moment(req.body.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
+  }
+  await userService.patch(id, changes);
+  const user = await userService.findByUserID(id);
+  req.session.authUser = user;
+  //chỉnh hiện ngày sinh
+  req.session.authUser.DayOfBirth = moment(req.session.authUser.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
+  res.redirect('/account/profile');
+});
+
+// Đổi mật khẩu - hiển thị form
+router.get('/doimatkhau', auth, async function (req, res) {
+  res.render('vwAccount/doimatkhau', {
+      layout: 'account_layout'
+  });
+});
+
+// Xử lý đổi mật khẩu
+router.post('/doimatkhau', auth, async function (req, res) {
+  const user = req.session.authUser;
+
+  // Kiểm tra mật khẩu cũ
+  if (!bcrypt.compareSync(req.body.old_password, user.Password_hash)) {
+      return res.render('vwAccount/doimatkhau', {
+          layout: 'account_layout',
+          error: 'Mật khẩu cũ không chính xác.'
+      });
+  }
+
+  // Kiểm tra mật khẩu mới và xác nhận mật khẩu
+  if (req.body.new_password !== req.body.confirm_password) {
+      return res.render('vwAccount/doimatkhau', {
+          layout: 'account_layout',
+          error: 'Mật khẩu mới và xác nhận không trùng khớp.'
+      });
+  }
+
+  // Cập nhật mật khẩu mới
+  const newPasswordHash = bcrypt.hashSync(req.body.new_password, 8);
+  await userService.updatePasswordbyID(user.UserID, newPasswordHash);
+
+  res.render('vwAccount/doimatkhau', {
+      layout: 'account_layout',
+      success: 'Đổi mật khẩu thành công!'
+  });
+});
+
+//log out
 router.post('/logout', auth, function (req, res) {
     req.session.auth = false;
     req.session.authUser = null;
     res.redirect(req.headers.referer);
 });
-  
-router.post('/patch', async function(req, res){
-    const id = req.body.UserID;
-    const changes = {
-        UserName: req.body.UserName,
-        Fullname: req.body.Fullname,
-        Email: req.body.Email,
-        DayOfBirth: req.body.DayOfBirth
-    }
-    await userService.patch(id, changes);
-    const user = await userService.findByUsername(req.body.UserName);
-    req.session.authUser = user;
-    res.redirect('/account/profile');
-});
 
+//Quên mật khẩu
 router.get('/quenmatkhau', function (req, res) {
     res.render('vwAccount/quenmatkhau', {
         layout: 'account_layout',

@@ -205,7 +205,10 @@ router.get('/bySearch', async function(req, res) {
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
-
+    let UserID = 0;
+    if(req.session.authUser){
+      UserID = req.session.authUser.UserID;
+    }
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
     // Truy vấn các tag của bài viết
@@ -249,7 +252,8 @@ router.get('/detail', async function (req, res) {
         pageNumbers: pageNumbers,
         needPagination: nPages > 1,
         totalPages: nPages,
-        comments: comments
+        comments: comments,
+        UserID: UserID
         });
       });
     } 
@@ -261,12 +265,14 @@ router.get('/detail', async function (req, res) {
       pageNumbers: pageNumbers,
       needPagination: nPages > 1,
       totalPages: nPages,
-      comments: comments
+      comments: comments,
+      UserID: UserID
       });
     }
     
 });
 
+//tăng view cho post
 router.get('/IncreaseView', async function( req, res) {
   const postId = req.query.id || 0;
   //update view
@@ -275,10 +281,12 @@ router.get('/IncreaseView', async function( req, res) {
    res.redirect(`/posts/detail?id=${postId}`);
 });
 
+//Comment
+//thêm comment
 router.post('/addComment',auth, async function(req, res) {
-  const PostID = req.body.PostID;
-  const UID = req.body.UID;
-  const Comment = req.body.Comment;  
+  const PostID = req.query.PostID;
+  const UID = req.session.authUser.UserID; // Lấy ID người dùng từ session
+  const Comment = req.body.Comment?.trim(); // Loại bỏ khoảng trắng thừa
 
   // Lấy thời gian hiện tại với moment
   const Date = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -288,7 +296,18 @@ router.post('/addComment',auth, async function(req, res) {
   const ret = await commentService.add(entity);
   res.redirect(`/posts/detail?id=${PostID}`);
 });
-router.get('/downloadPDF', async (req, res) => {
+
+router.get('/addComment', async function(req, res) {
+  res.redirect(`/posts/detail?id=${req.query.PostID}`);
+});
+
+//Xoá
+router.post('/delComment', async function (req, res) {
+  await commentService.delete(req.query.ComID);
+  res.redirect(`/posts/detail?id=${req.query.PostID}`);
+});
+
+router.get('/downloadPDF',auth, async (req, res) => {
   const postId = req.query.id || 0;
 
   // Fetch the post by ID
@@ -365,7 +384,5 @@ router.get('/downloadPDF', async (req, res) => {
     res.status(500).send('Error generating PDF');
   }
 });
-
-
 
 export default router;

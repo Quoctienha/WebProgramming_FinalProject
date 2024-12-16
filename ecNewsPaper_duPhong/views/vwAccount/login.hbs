@@ -68,16 +68,16 @@
                         </div>
                         <!-- Login Form Section for xl-->
                         <div class="col-6 d-none d-xl-block bg bg-light pt-5">
-                            <form method="post">                               
+                            <form method="post" action="/account/login">                               
                             <div class="form-group">
                                 <label for="txtUsername">Tên đăng nhập</label>
-                                <input type="text" class="form-control" id="txtUsername" name="username" placeholder="Tên đăng nhập"/>
+                                <input type="text" class="form-control" id="txtUsername" name="username" placeholder="Tên đăng nhập" required/>
                             </div>
                             <div class="form-group">
                                 <label for="txtPassword">Mật khẩu</label>
-                                <input type="password" class="form-control" id="txtPassword" name="raw_password" placeholder="Mật khẩu"/>
+                                <input type="password" class="form-control" id="txtPassword" name="raw_password" placeholder="Mật khẩu" required/>
                             </div>
-                            <a href="" class="d-block mb-4">Quên mật khẩu</a>
+                            <a href="/account/quenmatkhau" class="d-block mb-4">Quên mật khẩu</a>
                             <button type="submit" class="btn btn-lg btn-warning btn-block">
                             <i class="fa fa-sign-in" aria-hidden="true"></i>
                                 Đăng nhập
@@ -93,11 +93,11 @@
 
                         <!-- carousel Section for lg-->
                         <div class="col-6 d-none d-lg-block d-xl-none bg bg-light p-0">
-                            <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel">
+                            <div id="carouselExampleIndicators1" class="carousel slide " data-ride="carousel">
                 <ol class="carousel-indicators">
-                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    <li data-target="#carouselExampleIndicators1" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators1" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators1" data-slide-to="2"></li>
                 </ol>
                 <div class="carousel-inner h-100">
                     <div class="carousel-item active">
@@ -110,11 +110,11 @@
                         <img class="d-block w-100" src="http://localhost:3030/static/imgs/posters/poster3.png" alt="Slide 3">
                     </div>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <a class="carousel-control-prev" href="#carouselExampleIndicators1" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="sr-only">Previous</span>
                 </a>
-                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <a class="carousel-control-next" href="#carouselExampleIndicators1" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
                 </a>

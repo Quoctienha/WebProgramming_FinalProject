@@ -5,6 +5,10 @@ export default{
         return db('users').where('UserName', username).first();
     },
 
+    findByUserID(userID){
+        return db('users').where('UserID', userID).first();
+    },
+
     add(entity){
         return db('users').insert(entity);
     },
@@ -22,5 +26,11 @@ export default{
        return db('users')
        .where('Email', email) // Tìm người dùng theo email
        .update({ Password_hash: newPassword }); // Cập nhật mật khẩu mới
+    },
+
+    updatePasswordbyID(userID, newPasswordHash) {
+        return db('users')
+        .where('UserID', userID)
+        .update('Password_hash', newPasswordHash);
     }
 }

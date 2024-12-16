@@ -5,33 +5,115 @@
 {{#section 'js'}}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
   <script>
-    $('#frmRegister').on('submit', function (e) {
-      e.preventDefault();
+     // Cài đặt datetimepicker
+  $('#txtDOB').datetimepicker({
+    timepicker: false,
+    format: 'd/m/Y',
+    mask: true
+  });
 
-      const username = $('#txtUsername').val();
-      if (username.length === 0) {
-        alert('Invalid data!');
+  // Kiểm tra ràng buộc dữ liệu
+  $('#frmRegister').on('submit', function (e) {
+    e.preventDefault(); // Ngăn hành vi mặc định
+
+    // Lấy giá trị từ các trường
+    const username = $('#txtUsername').val().trim();
+    const password = $('#txtPassword').val().trim();
+    const confirmPassword = $('#txtConfirm').val().trim();
+    const name = $('#txtFullname').val().trim();
+    const address = $('#txtAddress').val().trim();
+    const phone = $('#txtPhone').val().trim();
+    const email = $('#txtEmail').val().trim();
+    const dob = $('#txtDOB').val().trim();
+
+    // Kiểm tra từng trường
+    if (username.length === 0) {
+      alert('Username is required.');
+      return;
+    }
+
+    $.getJSON(`/account/is-available?username=${username}`, function (data) {
+      if (!data) {
+        alert('Username is not available.');
         return;
       }
 
-      $.getJSON(`/account/is-available?username=${username}`, function (data) {
-        if (data === false) {
-          alert('Not available!');
-        } else {
-          $('#frmRegister').off('submit').submit();
-        }
-      });
-    });
+      if (password.length === 0) {
+        alert('Password is required.');
+        return;
+      }
 
-    $('#txtDOB').datetimepicker({
-      timepicker: false,
-      format: 'd/m/Y',
-      mask: true
-    });
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
 
-    //$('#txtUsername').select();
+      if (name.length === 0) {
+        alert('Full name is required.');
+        return;
+      }
+
+      if (!validateName(name)) {
+        alert('Full name should not contain numbers.');
+        return;
+      }
+
+      if (address.length === 0) {
+        alert('Address is required.');
+        return;
+      }
+
+      if (phone.length === 0) {
+        alert('Phone is required.');
+        return;
+      }
+
+      if (!validatePhone(phone)) {
+        alert('Phone should only contain numbers.');
+        return;
+      }
+
+      if (email.length === 0) {
+        alert('Email is required.');
+        return;
+      }
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      if (!validateDOB(dob)) {
+        alert('Please enter a valid Date of Birth in DD/MM/YYYY format.');
+        return;
+      }else {
+       // Nếu hợp lệ, submit form
+        $('#frmRegister').off('submit').submit();
+      }
+    });
+  });
+
+  function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+
+  function validateDOB(dob) {
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    return regex.test(dob);
+  }
+
+   function validateName(name) {
+    const regex = /^[a-zA-Z\s]+$/; // Chỉ cho phép chữ cái và khoảng trắng
+    return regex.test(name);
+  }
+
+  function validatePhone(phone) {
+    const regex = /^\d+$/; // Chỉ cho phép số
+    return regex.test(phone);
+  }
   </script>
 {{/section}}
+
 
 <form id="frmRegister" method="post">
   <div class="card bg bg-light">
@@ -73,7 +155,7 @@
         <input type="text" class="form-control" id="txtPhone" name="Phone" placeholder="Số điện thoại"/>
       </div>
       <div class="form-group">
-        <label for="txtEmail">Email (bắt buộc)</label>
+        <label for="txtEmail">Email</label>
         <input type="text" class="form-control" id="txtEmail" name="Email" placeholder="Email"/>
       </div>
       <div class="form-group">
