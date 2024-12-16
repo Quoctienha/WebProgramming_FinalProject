@@ -4,11 +4,21 @@ import categoryService from "../services/category.service.js";
 import commentService from '../services/comment.service.js';
 import tagService from '../services/tag.service.js';
 import moment from 'moment';
+import fs from 'fs';
+import puppeteer from 'puppeteer';
+import { fileURLToPath } from 'url';
+import { decode } from 'html-entities'; 
+
 
 //middlewares
 import auth from '../middlewares/auth.mdw.js';
 
+
 const router = express.Router();
+//Xác định thư mục hiện tại của tệp
+import path from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 router.get('/bySubcategory', async function (req, res) {
   const subCategoryId = req.query.id || 0;
@@ -298,6 +308,87 @@ router.get('/addComment', async function(req, res) {
 router.post('/delComment', async function (req, res) {
   await commentService.delete(req.query.ComID);
   res.redirect(`/posts/detail?id=${req.query.PostID}`);
+});
+
+router.get('/downloadPDF',auth, async function (req, res){
+  const postId = req.query.id || 0;
+  req.session.retUrl = `/posts/detail?id=${postId}`;
+  // Fetch the post by ID
+  const post = await postService.findPostsByPostID(postId);
+  if (!post) {
+    return res.status(404).send('Post not found');
+  }
+
+  // Decode HTML entities in content
+  post.Content = decode(post.Content);
+
+  // Format the post's public time
+  post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+
+  // Fetch the tags for the post
+  const tags = await tagService.findTagByPostID(post.PostID);
+  post.Tags = tags.map(tag => ({
+    TagID: tag.TagID,
+    TName: tag.TName,
+  }));
+
+  // Read the image as base64
+  const imagePath = path.resolve(__dirname, `../static/imgs/posts/${post.PostID}/${post.PostID}_1.jpg`);
+
+  const imageBase64 = fs.readFileSync(imagePath, 'base64');
+  const imageSrc = `data:image/jpg;base64,${imageBase64}`;
+
+  // HTML Content for the main PDF
+  const htmlContent = `
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          h1 { text-decoration: underline; font-size: 24px; }
+          .info { font-size: 14px; margin-bottom: 10px; }
+        </style>
+      </head>
+      <body>
+        <!-- Embed the image as base64 -->
+        <img src="${imageSrc}" alt="Post image" style="max-width:100%; height:auto; margin-top: 20px;">
+        <h1>${post.PostTitle}</h1>
+        <p class="info">Ngày công khai: ${post.TimePublic}</p>
+        <p class="info">Chuyên mục: ${post.CName} > ${post.SCName}</p>
+        <p class="info">Tags: ${post.Tags.map(tag => tag.TName).join(', ')}</p>
+        <p class="info">Tóm tắt:</p>
+        <div>${post.SumContent}</div>
+        <hr>
+        <div>${post.Content}</div>
+      </body>
+    </html>
+  `;
+
+  try {
+    // Launch Puppeteer
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Generate the PDF with the HTML content (including base64 image)
+    await page.setContent(htmlContent, { waitUntil: 'load' });
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+    });
+
+    // Close Puppeteer
+    await browser.close();
+
+    // Set headers for downloading the PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=ecNewsPaper_post_${post.PostID}.pdf`);
+
+    // Send the PDF buffer
+    res.end(pdfBuffer);
+
+  } catch (error) {
+    console.error('Error generating PDF with Puppeteer:', error);
+    res.status(500).send('Error generating PDF');
+  }
 });
 
 export default router;

@@ -66,6 +66,7 @@ router.post('/login', async function(req, res) {
 
   // Clear retUrl if set, and redirect to the home page or wherever the user is supposed to go
   const retUrl = req.session.retUrl || '/';
+    delete req.session.retUrl; // Xóa redirectUrl sau khi sử dụng
   delete req.session.retUrl;  // Clear any stored redirection URL after the user logs in
   res.redirect(retUrl);
 });

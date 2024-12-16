@@ -4,16 +4,19 @@ import categoryService from "../services/category.service.js";
 import commentService from '../services/comment.service.js';
 import tagService from '../services/tag.service.js';
 import moment from 'moment';
+import fs from 'fs';
+import puppeteer from 'puppeteer';
 import { fileURLToPath } from 'url';
-
 import { decode } from 'html-entities'; 
-import path from 'path';
+
 
 //middlewares
 import auth from '../middlewares/auth.mdw.js';
-import fs from 'fs';
-import puppeteer from 'puppeteer';
+
+
 const router = express.Router();
+//Xác định thư mục hiện tại của tệp
+import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -307,9 +310,9 @@ router.post('/delComment', async function (req, res) {
   res.redirect(`/posts/detail?id=${req.query.PostID}`);
 });
 
-router.get('/downloadPDF',auth, async (req, res) => {
+router.get('/downloadPDF',auth, async function (req, res){
   const postId = req.query.id || 0;
-
+  req.session.retUrl = `/posts/detail?id=${postId}`;
   // Fetch the post by ID
   const post = await postService.findPostsByPostID(postId);
   if (!post) {
@@ -346,14 +349,16 @@ router.get('/downloadPDF',auth, async (req, res) => {
         </style>
       </head>
       <body>
-        <h1>${post.PostTitle}</h1>
-        <p class="info">Published on: ${post.TimePublic}</p>
-        <p class="info">Category: ${post.CName} > ${post.SCName}</p>
-        <p class="info">Tags: ${post.Tags.map(tag => tag.TName).join(', ')}</p>
-        <p class="info">Views: ${post.view}</p>
-        <div>${post.Content}</div>
         <!-- Embed the image as base64 -->
         <img src="${imageSrc}" alt="Post image" style="max-width:100%; height:auto; margin-top: 20px;">
+        <h1>${post.PostTitle}</h1>
+        <p class="info">Ngày công khai: ${post.TimePublic}</p>
+        <p class="info">Chuyên mục: ${post.CName} > ${post.SCName}</p>
+        <p class="info">Tags: ${post.Tags.map(tag => tag.TName).join(', ')}</p>
+        <p class="info">Tóm tắt:</p>
+        <div>${post.SumContent}</div>
+        <hr>
+        <div>${post.Content}</div>
       </body>
     </html>
   `;
@@ -375,10 +380,11 @@ router.get('/downloadPDF',auth, async (req, res) => {
 
     // Set headers for downloading the PDF
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=post_${post.PostID}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=ecNewsPaper_post_${post.PostID}.pdf`);
 
     // Send the PDF buffer
     res.end(pdfBuffer);
+
   } catch (error) {
     console.error('Error generating PDF with Puppeteer:', error);
     res.status(500).send('Error generating PDF');

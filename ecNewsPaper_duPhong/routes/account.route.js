@@ -47,6 +47,7 @@ router.post('/login', async function(req, res) {
     //chỉnh hiện ngày sinh
     req.session.authUser.DayOfBirth = moment(req.session.authUser.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
     const retUrl = req.session.retUrl || '/';
+    delete req.session.retUrl; // Xóa redirectUrl sau khi sử dụng
     res.redirect(retUrl);
 });
 
