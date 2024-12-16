@@ -43,15 +43,11 @@
   </h4>
    <!--Write comments-->
   <div class="card-body border border-black bg bg-light" style="height: 10rem;">
-    <form method="POST" action="/posts/addComment">
-      <input type="hidden" name="PostID" id="txtPostID" class="form-control" value="{{post.PostID}}">
-
-      <!--Để user tạm-->
-      <input type="hidden" name="UID" id="txtUID" class="form-control" value="4">
+    <form method="POST" action="/posts/addComment?PostID={{post.PostID}}">
       <label class="h5" for="txtComment">Viết bình luận</label>
       <div class="row">
         <div class="col-sm-8">
-          <input id="txtComment" name="Comment" class="form-control mb-2" type="text" placeholder="Bình luận">
+          <input id="txtComment" name="Comment" class="form-control mb-2" type="text" placeholder="Bình luận" required>
         </div>
         <div class="col-sm-4 ">
           <button type="submit" class="btn btn-primary">
@@ -67,8 +63,18 @@
     {{#if comments.length}}
     {{#each comments}}
     <div class="card m-3">
-  <div class="card-header ">
-    {{UName}}
+  <div class="card-header d-flex justify-content-between">
+    <div class="h5">{{UName}}</div>
+    <div>
+      {{#if (Equal ../UserID UID)}}
+      <form method="POST" action="/posts/delComment?ComID={{ComID}}&PostID={{../post.PostID}}">
+        <button type="submit" class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i>
+            Xoá
+          </button>
+      </form>
+      {{/if}}
+    </div>
   </div>
   <div class="card-body">
     <blockquote class="blockquote mb-0">

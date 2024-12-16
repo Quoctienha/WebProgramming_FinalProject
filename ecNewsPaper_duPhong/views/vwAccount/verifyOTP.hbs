@@ -78,30 +78,30 @@
       <!-- Card Wrapper -->
       <div class="card shadow-lg border-0 rounded-3">
         <div class="card-body p-4">
-          <h3 class="card-title text-center mb-4 text-success fw-bold">Verify OTP</h3>
+          <h3 class="card-title text-center mb-4 text-success fw-bold">Xác minh OTP</h3>
           <p class="text-center text-muted mb-4">
-            Enter the OTP code we sent to your email.
+           Nhập mã OTP mà bạn nhập được qua email.
           </p>
 
           <!-- Form -->
           <form method="POST" action="/account/verifyOTP">
             <!-- OTP Input Field -->
             <div class="mb-4 text-center">
-              <label for="otp" class="form-label fw-bold">OTP Code</label>
+              <label for="otp" class="form-label fw-bold">Mã OTP </label>
               <input 
                 type="text" 
                 name="otp" 
                 id="otp" 
                 class="form-control text-center border-success rounded-pill shadow-sm" 
-                placeholder="Enter 6-digit OTP"
+                placeholder="Nhập mã OTP có 6 chữ số"
                 maxlength="6"
                 required>
             </div>
 
             <!-- Submit Button -->
             <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-success btn-lg rounded-pill">
-                Verify OTP
+              <button type="submit" class="btn btn-success btn-lg btn-block rounded-pill">
+                Xác minh mã OTP
               </button>
             </div>
 
@@ -116,8 +116,8 @@
           <!-- Additional Links -->
           <div class="text-center mt-4">
             <p class="text-muted">
-              Didn't receive the OTP? 
-              <a href="/account/verifyOTP" id="resendOTPLink" class="text-decoration-none text-success fw-bold">Resend OTP</a>
+              Không nhập được mã OTP? 
+              <a href="/account/verifyOTP" id="resendOTPLink" class="text-decoration-none text-success fw-bold">Gửi lại OTP</a>
             </p>
             <div id="resendMessage" class="text-center mt-3"></div>
           </div>

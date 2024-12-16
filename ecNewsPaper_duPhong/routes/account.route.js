@@ -1,13 +1,9 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import moment from 'moment';
-<<<<<<< HEAD
 import nodemailer from 'nodemailer';
 
 import auth from '../middlewares/auth.mdw.js';
-=======
-
->>>>>>> origin/main
 import userService from '../services/user.service.js';
 
 const router = express.Router();
@@ -45,20 +41,14 @@ router.post('/login', async function(req, res) {
             showErrors: true
         });
     }
-<<<<<<< HEAD
     
     req.session.auth = true;
     req.session.authUser = user;
-
+    //chỉnh hiện ngày sinh
+    req.session.authUser.DayOfBirth = moment(req.session.authUser.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
     const retUrl = req.session.retUrl || '/';
     res.redirect(retUrl);
 });
-=======
-    //res.session.isAuthenticated = true;
-    //res.session.authUser = user;
-    res.redirect('/');
-})
->>>>>>> origin/main
 
 //register
 router.get('/register', async function (req, res) {
@@ -88,12 +78,37 @@ router.post('/register', async function(req, res){
 
 })
 
-<<<<<<< HEAD
+//profile
 router.get('/profile', auth, function (req, res) {
     res.render('vwAccount/profile', {
       layout: 'account_layout',
       user: req.session.authUser
     });
+});
+
+//chỉnh sửa profile
+router.get('/patch', async function(req, res){
+  res.render('vwAccount/editProfile', {
+    layout: 'account_layout',
+    user: req.session.authUser
+  });
+});
+
+router.post('/patch', async function(req, res){
+  const id =  req.session.authUser.UserID;
+  const changes = {
+      Fullname: req.body.Fullname,
+      Address: req.body.Address,
+      Phone: req.body.Phone,
+      Email: req.body.Email,
+      DayOfBirth: moment(req.body.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
+  }
+  await userService.patch(id, changes);
+  const user = await userService.findByUserID(id);
+  req.session.authUser = user;
+  //chỉnh hiện ngày sinh
+  req.session.authUser.DayOfBirth = moment(req.session.authUser.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
+  res.redirect('/account/profile');
 });
 
 // Đổi mật khẩu - hiển thị form
@@ -133,27 +148,14 @@ router.post('/doimatkhau', auth, async function (req, res) {
   });
 });
 
-  
+//log out
 router.post('/logout', auth, function (req, res) {
     req.session.auth = false;
     req.session.authUser = null;
     res.redirect(req.headers.referer);
 });
-  
-router.post('/patch', async function(req, res){
-    const id = req.body.UserID;
-    const changes = {
-        UserName: req.body.UserName,
-        Fullname: req.body.Fullname,
-        Email: req.body.Email,
-        DayOfBirth: req.body.DayOfBirth
-    }
-    await userService.patch(id, changes);
-    const user = await userService.findByUsername(req.body.UserName);
-    req.session.authUser = user;
-    res.redirect('/account/profile');
-});
 
+//Quên mật khẩu
 router.get('/quenmatkhau', function (req, res) {
     res.render('vwAccount/quenmatkhau', {
         layout: 'account_layout',
@@ -376,6 +378,4 @@ router.post('/resetpassword', async function (req, res) {
   
   
 
-=======
->>>>>>> origin/main
 export default router;

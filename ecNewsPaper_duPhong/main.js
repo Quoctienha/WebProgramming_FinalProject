@@ -49,7 +49,7 @@ app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
-  cookie: {}
+  //cookie: {}
 }));
 // Middleware xử lý dữ liệu từ form (x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true }));

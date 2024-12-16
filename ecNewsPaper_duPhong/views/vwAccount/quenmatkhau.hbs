@@ -51,24 +51,24 @@ function validateEmail(email) {
       <!-- Card Wrapper -->
       <div class="card shadow-lg border-0 rounded-3">
         <div class="card-body p-4">
-          <h3 class="card-title text-center mb-4 text-primary">Forgot Password</h3>
-          <p class="text-center text-muted mb-4">Enter your email address to reset your password</p>
+          <h3 class="card-title text-center mb-4 text-primary">Quên Mật Khẩu</h3>
+          <p class="text-center text-muted mb-4">Xin hãy nhập địa chỉ email để đổi mật khẩu mới</p>
 
           <!-- Form -->
           <form id="frmForgotPassword" action="/account/quenmatkhau" method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label fw-bold">Email Address</label>
+              <label for="email" class="form-label fw-bold">Địa chỉ email </label>
               <input 
                 type="email" 
                 name="email" 
                 id="email" 
                 class="form-control border-primary shadow-sm" 
-                placeholder="Enter your email address" 
+                placeholder="Nhập địa chỉ email" 
                 required>
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-primary btn-lg">
-                Send OTP Code
+              <button type="submit" class="btn btn-primary btn-lg btn-block">
+                Gửi mã OTP 
               </button>
             </div>
           </form>
@@ -79,7 +79,7 @@ function validateEmail(email) {
           <!-- Help Link -->
           <div class="text-center">
             <a href="/account/login" class="text-decoration-none text-secondary">
-              Back to Login
+              Đăng nhập
             </a>
           </div>
         </div>

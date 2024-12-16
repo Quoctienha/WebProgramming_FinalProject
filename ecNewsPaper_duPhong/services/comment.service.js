@@ -4,7 +4,7 @@ export default{
     findCommentByPostID(PostID, limit, offset){
         return db('comment')
         .join('users', 'comment.UID', '=', 'users.UserID')
-        .select('comment.*', 'users.UserName as UName')
+        .select('comment.*', 'users.Fullname as UName')
         .where('comment.PostID', PostID).orderBy('Date', 'desc').limit(limit).offset(offset);
     },
 
@@ -15,4 +15,8 @@ export default{
     add(entity) { 
         return db('comment').insert(entity);
     },
+
+    delete(ComID){
+        return db('comment').where('ComID',ComID).del();
+    }
 }

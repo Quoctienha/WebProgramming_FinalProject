@@ -1,42 +1,62 @@
-<form action="" method="post">
-  <div class="card">
-    <h4 class="card-header bg bg-info text-white d-flex justify-content-between">
-      <div>
-        <i class="bi bi-person-lines-fill"></i>
-        Chỉnh sửa hồ sơ
-      </div>
-      <div>
-        <a href="/" class="btn btn-info" role="button" aria-pressed="true"><i class="bi bi-backspace"></i></a>
-     </div>
-    </h4>
-    <div class="card-body">
-      <div class="form-group">
-        <label for="txtUserID">UserID</label>
-        <input type="text" name="UserID" id="txtUserID" class="form-control" placeholder="" readonly value="{{this.user.UserID}}">
-      </div>
-      <div class="form-group">
-        <label for="txtUsername">Username</label>
-        <input type="text" name="UserName" id="txtUsername" class="form-control" placeholder="" value="{{this.user.UserName}}">
-      </div>
-      <div class="form-group">
-        <label for="txtName">Name</label>
-        <input type="text" name="Fullname" id="txtName" class="form-control" placeholder="" value="{{this.user.Fullname}}">
-      </div>
-      <div class="form-group">
-        <label for="txtEmail">Email</label>
-        <input type="email" name="Email" id="txtEmail" class="form-control" placeholder="" value="{{this.user.Email}}">
-      </div>
-      <div class="form-group">
-        <label for="txtDOB">DayOfBirth</label>
-        <input type="text" name="DayOfBirth" id="txtDOB" class="form-control" placeholder="" value="{{this.user.DayOfBirth}}">
-      </div>
-      <button type="submit" class="btn btn-primary"  formaction="patch">
-        <i class="bi bi-check2"></i>
-        Edit
-      </button>
-    </div>
-    <div class="card-footer text-muted">
-      Footer
-    </div>
+<div class="card text-center">
+  <div class="card-header bg bg-info text-white h3">
+    Hồ sơ người dùng
   </div>
-</form>
+  <div class="card-body text-left bg bg-light">
+    <div class="row d-flex justify-content-center">
+        <img src="http://localhost:3030/static/imgs/profile.jpg" class="img-thumbnail" alt="..." style="width: 15vw;">
+    </div>
+    <div class="row d-flex justify-content-center m-2">
+        <a href="/account/patch" class="btn btn-primary" role="button" aria-pressed="true">
+            Chỉnh sửa
+            <i class="bi bi-pencil-square"></i>
+        </a>
+        <a href="/" class="btn btn-success ml-2" role="button" aria-pressed="true">
+           <i class="bi bi-house-door-fill"></i>
+        </a>
+    </div>
+    <form>
+        <div class="h4">
+            Vai trò: 
+            {{#if (Equal this.user.Permission 0)}}
+                <span class="badge badge-secondary">Độc giả</span>
+            {{/if}}
+
+            {{#if (Equal this.user.Permission 1)}}
+                <span class="badge badge-info">Phóng viên</span>
+            {{/if}}
+
+            {{#if (Equal this.user.Permission 2)}}
+                <span class="badge badge-success">Biên tập viên</span>
+            {{/if}}
+
+            {{#if (Equal this.user.Permission 3)}}
+                <span class="badge badge-primary">Quản trị viên</span>
+            {{/if}}
+        </div>
+        <hr>
+        <div class="form-group">
+            <label for="txtName">Họ và tên</label>
+            <input type="text" name="Fullname" id="txtName" class="form-control" placeholder="" value="{{this.user.Fullname}}" readonly/>
+        </div>
+        <div class="form-group">
+            <label for="txtAddress">Địa chỉ</label>
+            <input type="text" class="form-control" id="txtAddress" name="Address" placeholder="" value="{{this.user.Address}}" readonly/>
+        </div>
+        <div class="form-group">
+            <label for="txtPhone">Số điện thoại</label>
+            <input type="text" class="form-control" id="txtPhone" name="Phone" placeholder="" value="{{this.user.Phone}}" readonly/>
+        </div>
+        <div class="form-group">
+            <label for="txtEmail">Email</label>
+            <input type="email" name="Email" id="txtEmail" class="form-control" placeholder="" value="{{this.user.Email}}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="txtDOB">Ngày sinh</label>
+            <input type="text" name="DayOfBirth" id="txtDOB" class="form-control" placeholder="" value="{{this.user.DayOfBirth}}" readonly>
+        </div>
+    </form>
+    </div>
+  <div class="card-footer text-center">
+  </div>
+</div>

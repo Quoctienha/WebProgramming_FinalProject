@@ -149,8 +149,6 @@ router.get('/byTag', async function(req, res) {
 
 });
 
-<<<<<<< HEAD
-=======
 router.get('/bySearch', async function(req, res) {
   const keyword = req.query.keyword;
   const nRows = await postService.countBySearch(keyword);
@@ -196,11 +194,14 @@ router.get('/bySearch', async function(req, res) {
 
 });
 
->>>>>>> origin/main
 //Note: không gọi trực tiếp /detail nếu không cần thiết, gọi /IncreaseView để tăng view cho post
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
+    let UserID = 0;
+    if(req.session.authUser){
+      UserID = req.session.authUser.UserID;
+    }
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
     // Truy vấn các tag của bài viết
@@ -234,17 +235,37 @@ router.get('/detail', async function (req, res) {
     comments.forEach(comment => {
       comment.Date = moment(comment.Date).format('DD/MM/YYYY HH:mm:ss');
     });
-    
-    res.render('vwPost/detail', {
+
+    // Kiểm tra nếu bài viết là premium
+    if (post.Premium) {
+      auth(req, res, async () => {
+        res.render('vwPost/detail', {
+        post: post,
+        current_page:current_page,
+        pageNumbers: pageNumbers,
+        needPagination: nPages > 1,
+        totalPages: nPages,
+        comments: comments,
+        UserID: UserID
+        });
+      });
+    } 
+    else {
+      // Bài viết không phải premium
+      res.render('vwPost/detail', {
       post: post,
       current_page:current_page,
       pageNumbers: pageNumbers,
       needPagination: nPages > 1,
       totalPages: nPages,
-      comments: comments
-    });
+      comments: comments,
+      UserID: UserID
+      });
+    }
+    
 });
 
+//tăng view cho post
 router.get('/IncreaseView', async function( req, res) {
   const postId = req.query.id || 0;
   //update view
@@ -253,10 +274,12 @@ router.get('/IncreaseView', async function( req, res) {
    res.redirect(`/posts/detail?id=${postId}`);
 });
 
+//Comment
+//thêm comment
 router.post('/addComment',auth, async function(req, res) {
-  const PostID = req.body.PostID;
-  const UID = req.body.UID;
-  const Comment = req.body.Comment;  
+  const PostID = req.query.PostID;
+  const UID = req.session.authUser.UserID; // Lấy ID người dùng từ session
+  const Comment = req.body.Comment?.trim(); // Loại bỏ khoảng trắng thừa
 
   // Lấy thời gian hiện tại với moment
   const Date = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -268,7 +291,13 @@ router.post('/addComment',auth, async function(req, res) {
 });
 
 router.get('/addComment', async function(req, res) {
-  res.redirect(`/`);
+  res.redirect(`/posts/detail?id=${req.query.PostID}`);
+});
+
+//Xoá
+router.post('/delComment', async function (req, res) {
+  await commentService.delete(req.query.ComID);
+  res.redirect(`/posts/detail?id=${req.query.PostID}`);
 });
 
 export default router;
