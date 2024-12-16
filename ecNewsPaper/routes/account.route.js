@@ -83,6 +83,44 @@ router.get('/profile', auth, function (req, res) {
       user: req.session.authUser
     });
 });
+
+// Đổi mật khẩu - hiển thị form
+router.get('/doimatkhau', auth, async function (req, res) {
+  res.render('vwAccount/doimatkhau', {
+      layout: 'account_layout'
+  });
+});
+
+// Xử lý đổi mật khẩu
+router.post('/doimatkhau', auth, async function (req, res) {
+  const user = req.session.authUser;
+
+  // Kiểm tra mật khẩu cũ
+  if (!bcrypt.compareSync(req.body.old_password, user.Password_hash)) {
+      return res.render('vwAccount/doimatkhau', {
+          layout: 'account_layout',
+          error: 'Mật khẩu cũ không chính xác.'
+      });
+  }
+
+  // Kiểm tra mật khẩu mới và xác nhận mật khẩu
+  if (req.body.new_password !== req.body.confirm_password) {
+      return res.render('vwAccount/doimatkhau', {
+          layout: 'account_layout',
+          error: 'Mật khẩu mới và xác nhận không trùng khớp.'
+      });
+  }
+
+  // Cập nhật mật khẩu mới
+  const newPasswordHash = bcrypt.hashSync(req.body.new_password, 8);
+  await userService.updatePasswordbyID(user.UserID, newPasswordHash);
+
+  res.render('vwAccount/doimatkhau', {
+      layout: 'account_layout',
+      success: 'Đổi mật khẩu thành công!'
+  });
+});
+
   
 router.post('/logout', auth, function (req, res) {
     req.session.auth = false;
