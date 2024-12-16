@@ -15,7 +15,8 @@ export default{
         .join('posts', 'post_tags.PostID', 'posts.PostID')
         .join('categories', 'posts.CID', '=', 'categories.CID')
         .join('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
-        .where('post_tags.TagID', tagId).limit(limit).offset(offset);
+        .where('post_tags.TagID', tagId)
+        .orderBy('Premium', 'desc').limit(limit).offset(offset);
     },
 
     countByTagId(TagID) {
