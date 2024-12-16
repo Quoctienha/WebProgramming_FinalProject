@@ -22,33 +22,54 @@ router.get('/is-available', async function(req, res){
 //Login
 router.get('/login', async function (req, res) {
     res.render('vwAccount/login', {
-      layout: 'account_layout'
+      layout: 'account_layout',
+      showErrors: false, // Reset errors on the GET request
+      message:false
     });
 });
-
+const currentDate = moment();
+// Login route
 router.post('/login', async function(req, res) {
-    const user =await userService.findByUsername(req.body.username);
-    if(!user){
-        return res.render('vwAccount/login',{
-            layout: 'account_layout',
-            showErrors: true
-        });
-    }
-    
-    if(!bcrypt.compareSync(req.body.raw_password, user.Password_hash)){
-        return res.render('vwAccount/login', {
-            layout: 'account_layout',
-            showErrors: true
-        });
-    }
-    
-    req.session.auth = true;
-    req.session.authUser = user;
-    //chỉnh hiện ngày sinh
-    req.session.authUser.DayOfBirth = moment(req.session.authUser.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD')
-    const retUrl = req.session.retUrl || '/';
-    res.redirect(retUrl);
+  const user = await userService.findByUsername(req.body.username);
+
+  if (!user) {
+      return res.render('vwAccount/login', {
+          layout: 'account_layout',
+          showErrors: true
+      });
+  }
+
+  // Check password
+  if (!bcrypt.compareSync(req.body.raw_password, user.Password_hash)) {
+      return res.render('vwAccount/login', {
+          layout: 'account_layout',
+          showErrors: true
+      });
+  }
+
+  // Check if the account is expired based on NgayHHPremium
+
+  const expirationDate = moment(user.NgayHHPremium, 'YYYY-MM-DD HH:mm:ss');
+  if(user.Permission===0){
+  if (currentDate.isAfter(expirationDate)) {
+      return res.render('vwAccount/login', {
+          layout: 'account_layout',
+          
+          message:true
+      });
+  }
+  }
+  // Set session variables after a successful login
+  req.session.auth = true;
+  req.session.authUser = user;
+  req.session.authUser.DayOfBirth = moment(user.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD');
+
+  // Clear retUrl if set, and redirect to the home page or wherever the user is supposed to go
+  const retUrl = req.session.retUrl || '/';
+  delete req.session.retUrl;  // Clear any stored redirection URL after the user logs in
+  res.redirect(retUrl);
 });
+
 
 //register
 router.get('/register', async function (req, res) {
@@ -68,7 +89,8 @@ router.post('/register', async function(req, res){
         Address: req.body.Address,
         Email: req.body.Email,
         DayOfBirth: ymd_dob,
-        Permission: 0
+        Permission: 0,
+        NgayHHPremium: moment().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
     }
 
     const ret = await userService.add(entity);

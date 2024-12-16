@@ -8,10 +8,22 @@
                         <a href="/" class="btn btn-primary" role="button" aria-pressed="true"><i class="bi bi-backspace"></i></a>
                     </div>
                 </h4>
+                
+
                 <div class="card-body p-0 ">
                     {{#if showErrors}}
+                        
                         <div class="alert alert-warning alert-dismissible fade show m-0" role="alert">
                             <strong>Đăng nhập thất bại!</strong> Hãy kiểm tra lại <b>Tên đăng nhập</b> và <b>Mật khẩu</b>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                       
+                    {{/if}}
+                    {{#if message}}
+                         <div class="alert alert-warning alert-dismissible fade show m-0" role="alert">
+                            <strong>Đăng nhập thất bại!</strong> Tài khoản đã hết hạn sử dụng 
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
