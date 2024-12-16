@@ -38,16 +38,28 @@
         return;
       }
 
+<<<<<<< HEAD
       if (password.length === 0) {
         alert('Password is required.');
         return;
       }
+=======
+      $.getJSON(`/account/is-available?username=${username}`, function (data) {
+        if (data === false) {
+          alert('Not available!');
+        } else {
+          $('#frmRegister').off('submit').submit();
+        }
+      });
+    });
+>>>>>>> origin/main
 
       if (password !== confirmPassword) {
         alert('Passwords do not match.');
         return;
       }
 
+<<<<<<< HEAD
       if (name.length === 0) {
         alert('Full name is required.');
         return;
@@ -111,6 +123,9 @@
     const regex = /^\d+$/; // Chỉ cho phép số
     return regex.test(phone);
   }
+=======
+    //$('#txtUsername').select();
+>>>>>>> origin/main
   </script>
 {{/section}}
 

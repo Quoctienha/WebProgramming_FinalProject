@@ -26,8 +26,8 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <!-- Search form -->
-        <form class="form-inline my-2 my-lg-0 col-9 p-0 mr-auto">
-          <input class="form-control mr-sm-2 col-12 col-lg-9" type="search" placeholder="Tìm kiếm" aria-label="Search">
+        <form action="/posts/bySearch" method="GET" class="form-inline my-2 my-lg-0 col-9 p-0 mr-auto">
+          <input class="form-control mr-sm-2 col-12 col-lg-9" name="keyword" type="search" placeholder="Tìm kiếm bài viết..." aria-label="Search" required>
           <button class="btn btn-outline-light my-2 my-sm-2" type="submit">
             <b>
               Tìm kiếm

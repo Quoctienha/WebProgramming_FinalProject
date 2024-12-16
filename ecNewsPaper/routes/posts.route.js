@@ -149,10 +149,56 @@ router.get('/byTag', async function(req, res) {
 
 });
 
+router.get('/bySearch', async function(req, res) {
+  const keyword = req.query.keyword;
+  const nRows = await postService.countBySearch(keyword);
+  const limit = parseInt(2);
+  const nPages = Math.ceil(nRows.total / limit);
+  //current page
+  const current_page =  Math.max(1, parseInt(req.query.page) || 1);
+  //offset
+  const offset = (current_page - 1) * limit;  
+  // Xác định dải trang hiển thị
+  const startPage = Math.max(1, current_page - 1); // Trang bắt đầu
+  const endPage = Math.min(nPages, current_page + 1); // Trang kết thúc
+
+  const pageNumbers = [];    
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push({
+        value: i,
+        active:i === +current_page
+      });
+  }
+
+  const posts = await postService.searchPosts(keyword, limit, offset)
+  for (let post of posts) {
+    // Định dạng thời gian cho từng post
+    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID); 
+    // Thêm tags vào bài viết
+    post.Tags = tags.map(tag => ({
+      TagID: tag.TagID,
+      TName: tag.TName
+    }));
+   }
+   res.render('vwPost/bySearch', {
+    title: `Tìm kiếm: ${keyword}`,
+    pageNumbers:pageNumbers,
+    needPagination: nPages > 1,
+    current_page: current_page,
+    posts: posts,
+    totalPages: nPages,
+    keyword: keyword
+  });
+
+});
+
 //Note: không gọi trực tiếp /detail nếu không cần thiết, gọi /IncreaseView để tăng view cho post
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
+
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
     // Truy vấn các tag của bài viết
@@ -186,15 +232,32 @@ router.get('/detail', async function (req, res) {
     comments.forEach(comment => {
       comment.Date = moment(comment.Date).format('DD/MM/YYYY HH:mm:ss');
     });
-    
-    res.render('vwPost/detail', {
+
+    // Kiểm tra nếu bài viết là premium
+    if (post.Premium) {
+      auth(req, res, async () => {
+        res.render('vwPost/detail', {
+        post: post,
+        current_page:current_page,
+        pageNumbers: pageNumbers,
+        needPagination: nPages > 1,
+        totalPages: nPages,
+        comments: comments
+        });
+      });
+    } 
+    else {
+      // Bài viết không phải premium
+      res.render('vwPost/detail', {
       post: post,
       current_page:current_page,
       pageNumbers: pageNumbers,
       needPagination: nPages > 1,
       totalPages: nPages,
       comments: comments
-    });
+      });
+    }
+    
 });
 
 router.get('/IncreaseView', async function( req, res) {

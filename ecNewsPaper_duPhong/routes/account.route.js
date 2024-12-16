@@ -1,9 +1,13 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import moment from 'moment';
+<<<<<<< HEAD
 import nodemailer from 'nodemailer';
 
 import auth from '../middlewares/auth.mdw.js';
+=======
+
+>>>>>>> origin/main
 import userService from '../services/user.service.js';
 
 const router = express.Router();
@@ -41,6 +45,7 @@ router.post('/login', async function(req, res) {
             showErrors: true
         });
     }
+<<<<<<< HEAD
     
     req.session.auth = true;
     req.session.authUser = user;
@@ -48,6 +53,12 @@ router.post('/login', async function(req, res) {
     const retUrl = req.session.retUrl || '/';
     res.redirect(retUrl);
 });
+=======
+    //res.session.isAuthenticated = true;
+    //res.session.authUser = user;
+    res.redirect('/');
+})
+>>>>>>> origin/main
 
 //register
 router.get('/register', async function (req, res) {
@@ -77,6 +88,7 @@ router.post('/register', async function(req, res){
 
 })
 
+<<<<<<< HEAD
 router.get('/profile', auth, function (req, res) {
     res.render('vwAccount/profile', {
       layout: 'account_layout',
@@ -364,4 +376,6 @@ router.post('/resetpassword', async function (req, res) {
   
   
 
+=======
+>>>>>>> origin/main
 export default router;

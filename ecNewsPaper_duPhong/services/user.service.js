@@ -7,6 +7,7 @@ export default{
 
     add(entity){
         return db('users').insert(entity);
+<<<<<<< HEAD
     },
 
     patch(id, entity){
@@ -28,5 +29,7 @@ export default{
         return db('users')
         .where('UserID', userID)
         .update('Password_hash', newPasswordHash);
+=======
+>>>>>>> origin/main
     }
 }
