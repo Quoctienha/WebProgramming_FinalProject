@@ -198,6 +198,7 @@ router.get('/bySearch', async function(req, res) {
 router.get('/detail', async function (req, res) {
     const postId = req.query.id || 0;
     const post = await postService.findPostsByPostID(postId); 
+
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
     // Truy vấn các tag của bài viết
@@ -231,15 +232,32 @@ router.get('/detail', async function (req, res) {
     comments.forEach(comment => {
       comment.Date = moment(comment.Date).format('DD/MM/YYYY HH:mm:ss');
     });
-    
-    res.render('vwPost/detail', {
+
+    // Kiểm tra nếu bài viết là premium
+    if (post.Premium) {
+      auth(req, res, async () => {
+        res.render('vwPost/detail', {
+        post: post,
+        current_page:current_page,
+        pageNumbers: pageNumbers,
+        needPagination: nPages > 1,
+        totalPages: nPages,
+        comments: comments
+        });
+      });
+    } 
+    else {
+      // Bài viết không phải premium
+      res.render('vwPost/detail', {
       post: post,
       current_page:current_page,
       pageNumbers: pageNumbers,
       needPagination: nPages > 1,
       totalPages: nPages,
       comments: comments
-    });
+      });
+    }
+    
 });
 
 router.get('/IncreaseView', async function( req, res) {
