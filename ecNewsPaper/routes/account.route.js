@@ -24,10 +24,11 @@ router.get('/is-available', async function(req, res){
 
 //Login
 router.get('/login', async function (req, res) {
+  const message = req.query.message || false
     res.render('vwAccount/login', {
       layout: 'account_layout',
       showErrors: false, // Reset errors on the GET request
-      message:false
+      message: message
     });
 });
 // Login route
