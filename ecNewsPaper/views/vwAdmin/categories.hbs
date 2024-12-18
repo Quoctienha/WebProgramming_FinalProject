@@ -1,0 +1,64 @@
+<div class="container mt-4">
+    <h2>Quản lý danh mục (Categories)</h2>
+    <hr>
+    <!-- Form thêm danh mục -->
+    <h3>Thêm danh mục mới</h3>
+    <form method="POST" action="/admin/categories/add">
+        <div class="form-group mb-2">
+            <label for="CName">Tên danh mục</label>
+            <input type="text" name="CName" id="CName" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success m-0">
+            Thêm
+            <i class="bi bi-plus-lg"></i>
+        </button>
+    </form>
+    <hr>
+    <h5>Danh sách Categories</h5>
+    <!-- Hiển thị danh sách danh mục -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên danh mục</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each categories}}
+            <tr>
+                <td>{{this.CID}}</td>
+                <td>{{this.CName}}</td>
+                <td>
+                    <!-- Form sửa danh mục -->
+                    <form method="POST" action="/admin/categories/edit" class="d-inline">
+                        <input type="hidden" name="CID" value="{{this.CID}}">
+                        <input type="text" name="CName" value="{{this.CName}}" class="form-control d-inline w-50">
+                        <button type="submit" class="btn btn-warning">
+                            Sửa
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </form>
+
+                    <!-- Form xóa danh mục -->
+                    <form method="POST" action="/admin/categories/delete" class="d-inline">
+                        <input type="hidden" name="CID" value="{{this.CID}}">
+                        <button type="submit" class="btn btn-danger">
+                            Xóa
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                    <!-- Form chuyển sang danh mục subcategories -->
+                    <form class="d-inline">
+                        <a href="/admin/categories/subcategories?id={{CID}}" class="btn btn-link">
+                            Chuyên mục phụ
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

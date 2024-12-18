@@ -10,7 +10,7 @@ import tagService from './services/tag.service.js';
 
 import postsRouter from './routes/posts.route.js';
 import accountRouter from './routes/account.route.js';
-
+import adminRouter from './routes/admin.route.js';
 
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
@@ -67,6 +67,7 @@ app.use(async function (req, res, next) {
   res.locals.authUser = req.session.authUser;
   next();
 });
+
 //middleware
 app.use( async function(req,res,next){
   const categorieslV1 = await categoryService.findAllCategories();
@@ -222,6 +223,7 @@ for (let post of top3post) {
 
 app.use('/posts', postsRouter);
 app.use('/account', accountRouter);
+app.use('/admin', adminRouter);
 
 app.listen(port, function() {
   console.log(`ecNewsPaper app listening at http://localhost:${port}`)
