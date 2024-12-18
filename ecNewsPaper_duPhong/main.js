@@ -223,6 +223,10 @@ for (let post of top3post) {
 app.use('/posts', postsRouter);
 app.use('/account', accountRouter);
 
+app.use('/403',function (req, res, next) {
+  res.render('403', { layout: false });
+});
+
 app.listen(port, function() {
   console.log(`ecNewsPaper app listening at http://localhost:${port}`)
 });
