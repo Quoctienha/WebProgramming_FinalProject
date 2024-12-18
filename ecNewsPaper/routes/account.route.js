@@ -3,7 +3,10 @@ import bcrypt from 'bcryptjs';
 import moment from 'moment';
 import nodemailer from 'nodemailer';
 
+//middleware
 import auth from '../middlewares/auth.mdw.js';
+import {authPremium} from '../middlewares/auth.mdw.js';
+
 import userService from '../services/user.service.js';
 
 const router = express.Router();
@@ -21,13 +24,13 @@ router.get('/is-available', async function(req, res){
 
 //Login
 router.get('/login', async function (req, res) {
+  const message = req.query.message || false
     res.render('vwAccount/login', {
       layout: 'account_layout',
       showErrors: false, // Reset errors on the GET request
-      message:false
+      message: message
     });
 });
-const currentDate = moment();
 // Login route
 router.post('/login', async function(req, res) {
   const user = await userService.findByUsername(req.body.username);
@@ -48,13 +51,12 @@ router.post('/login', async function(req, res) {
   }
 
   // Check if the account is expired based on NgayHHPremium
-
   const expirationDate = moment(user.NgayHHPremium, 'YYYY-MM-DD HH:mm:ss');
+  const currentDate = moment();
   if(user.Permission===0){
   if (currentDate.isAfter(expirationDate)) {
       return res.render('vwAccount/login', {
-          layout: 'account_layout',
-          
+          layout: 'account_layout',     
           message:true
       });
   }
@@ -63,7 +65,6 @@ router.post('/login', async function(req, res) {
   req.session.auth = true;
   req.session.authUser = user;
   req.session.authUser.DayOfBirth = moment(user.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD');
-
   // Clear retUrl if set, and redirect to the home page or wherever the user is supposed to go
   const retUrl = req.session.retUrl || '/';
     delete req.session.retUrl; // Xóa redirectUrl sau khi sử dụng
@@ -91,6 +92,7 @@ router.post('/register', async function(req, res){
         Email: req.body.Email,
         DayOfBirth: ymd_dob,
         Permission: 0,
+        NgayDKPremium: moment().format('YYYY-MM-DD HH:mm:ss'),
         NgayHHPremium: moment().add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
     }
 
@@ -102,7 +104,7 @@ router.post('/register', async function(req, res){
 })
 
 //profile
-router.get('/profile', auth, function (req, res) {
+router.get('/profile', authPremium, function (req, res) {
     res.render('vwAccount/profile', {
       layout: 'account_layout',
       user: req.session.authUser
@@ -135,14 +137,14 @@ router.post('/patch', async function(req, res){
 });
 
 // Đổi mật khẩu - hiển thị form
-router.get('/doimatkhau', auth, async function (req, res) {
+router.get('/doimatkhau', authPremium, async function (req, res) {
   res.render('vwAccount/doimatkhau', {
       layout: 'account_layout'
   });
 });
 
 // Xử lý đổi mật khẩu
-router.post('/doimatkhau', auth, async function (req, res) {
+router.post('/doimatkhau', authPremium, async function (req, res) {
   const user = req.session.authUser;
 
   // Kiểm tra mật khẩu cũ
@@ -172,7 +174,7 @@ router.post('/doimatkhau', auth, async function (req, res) {
 });
 
 //log out
-router.post('/logout', auth, function (req, res) {
+router.post('/logout', authPremium, function (req, res) {
     req.session.auth = false;
     req.session.authUser = null;
     res.redirect(req.headers.referer);

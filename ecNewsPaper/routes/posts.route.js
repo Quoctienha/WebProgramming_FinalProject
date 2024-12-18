@@ -12,6 +12,7 @@ import { decode } from 'html-entities';
 
 //middlewares
 import auth from '../middlewares/auth.mdw.js';
+import { authPremium } from '../middlewares/auth.mdw.js';
 
 
 const router = express.Router();
@@ -248,7 +249,7 @@ router.get('/detail', async function (req, res) {
 
     // Kiểm tra nếu bài viết là premium
     if (post.Premium) {
-      auth(req, res, async () => {
+      authPremium(req, res, async () => {
         res.render('vwPost/detail', {
         post: post,
         current_page:current_page,
@@ -286,8 +287,8 @@ router.get('/IncreaseView', async function( req, res) {
 
 //Comment
 //thêm comment
-router.post('/addComment',auth, async function(req, res) {
-  const PostID = req.query.PostID;
+router.post('/addComment',authPremium, async function(req, res) {
+  const PostID = req.body.PostID;
   const UID = req.session.authUser.UserID; // Lấy ID người dùng từ session
   const Comment = req.body.Comment?.trim(); // Loại bỏ khoảng trắng thừa
 
@@ -306,11 +307,11 @@ router.get('/addComment', async function(req, res) {
 
 //Xoá
 router.post('/delComment', async function (req, res) {
-  await commentService.delete(req.query.ComID);
-  res.redirect(`/posts/detail?id=${req.query.PostID}`);
+  await commentService.delete(req.body.ComID);
+  res.redirect(`/posts/detail?id=${req.body.PostID}`);
 });
 
-router.get('/downloadPDF',auth, async function (req, res){
+router.get('/downloadPDF',authPremium, async function (req, res){
   const postId = req.query.id || 0;
   req.session.retUrl = `/posts/detail?id=${postId}`;
   // Fetch the post by ID
