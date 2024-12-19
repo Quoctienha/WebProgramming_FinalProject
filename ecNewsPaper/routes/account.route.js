@@ -105,16 +105,18 @@ router.post('/register', async function(req, res){
 
 //profile
 router.get('/profile', authPremium, function (req, res) {
+    res.locals.lcIsCenter = true;
     res.render('vwAccount/profile', {
-      layout: 'account_layout',
+      //layout: 'account_layout',
       user: req.session.authUser
     });
 });
 
 //chỉnh sửa profile
 router.get('/patch', async function(req, res){
+  res.locals.lcIsCenter = true;
   res.render('vwAccount/editProfile', {
-    layout: 'account_layout',
+    //layout: 'account_layout',
     user: req.session.authUser
   });
 });

@@ -43,7 +43,8 @@
   </h4>
    <!--Write comments-->
   <div class="card-body border border-black bg bg-light" style="height: 10rem;">
-    <form method="POST" action="/posts/addComment?PostID={{post.PostID}}">
+    <form method="POST" action="/posts/addComment">
+      <input name="PostID" value="{{post.PostID}}" class="form-control mb-2" type="text"hidden>
       <label class="h5" for="txtComment">Viết bình luận</label>
       <div class="row">
         <div class="col-sm-8">
@@ -67,7 +68,9 @@
     <div class="h5">{{UName}}</div>
     <div>
       {{#if (Equal ../UserID UID)}}
-      <form method="POST" action="/posts/delComment?ComID={{ComID}}&PostID={{../post.PostID}}">
+      <form method="POST" action="/posts/delComment">
+        <input name="ComID" value="{{ComID}}" class="form-control mb-2" type="text"hidden>
+        <input name="PostID" value="{{../post.PostID}}" class="form-control mb-2" type="text"hidden>
         <button type="submit" class="btn btn-outline-danger">
             <i class="bi bi-trash"></i>
             Xoá

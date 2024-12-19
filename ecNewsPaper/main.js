@@ -83,6 +83,7 @@ app.use( async function(req,res,next){
   }
   
   res.locals.lcCategories = categories;
+  res.locals.lcIsCenter = false;
 
   next();
 });
