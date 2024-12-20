@@ -4,7 +4,6 @@ import moment from 'moment';
 import nodemailer from 'nodemailer';
 
 //middleware
-import auth from '../middlewares/auth.mdw.js';
 import {authPremium} from '../middlewares/auth.mdw.js';
 
 import userService from '../services/user.service.js';

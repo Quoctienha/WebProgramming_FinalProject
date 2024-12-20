@@ -49,6 +49,29 @@
 
         <!-- Categories (small screens) -->
         <div class="d-block d-lg-none">
+          {{#if lcIsAdminPage}}
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="/admin/categories">QL chuyên mục</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/admin/tags">QL nhãn</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Pricing</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                Dropdown link
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          </ul>
+          {{/if}}
           <button class="btn btn-primary pl-0" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
             <i class="bi bi-bookmarks-fill"></i>
             Chuyên mục
@@ -91,6 +114,12 @@
                 Xin Chào, <b>{{authUser.Fullname}}</b>
               </a>
               <div class="dropdown-menu">
+                {{#if (Equal authUser.Permission 3)}}
+                <a class="dropdown-item" href="/admin">
+                  <i class="bi bi-kanban-fill"></i>
+                  Trang quản trị
+                </a>
+                {{/if}}
                 <a class="dropdown-item" href="/account/profile">
                   <i class="bi bi-person"></i>
                   Hồ Sơ
@@ -135,22 +164,95 @@
         </div>
       {{else}}
       <div class="row">
-        <!-- Main content area for xl screen style="height: 86vh; overflow-y: auto;"-->
-        <div class="col-sm-9 d-none d-xl-block animate__animated animate__fadeInDown" >
+        <!-- Main content area for xl screen -->
+        <div class="col-sm-9 d-none d-xl-block p-0 animate__animated animate__fadeInDown" >
           {{{body}}}
         </div>
-        <!-- Main content area for lg screen style="height: 93vh; overflow-y: auto;"-->
-        <div class="col-sm-9 d-none d-lg-block d-xl-none animate__animated animate__fadeInDown" >
+        <!-- Main content area for lg screen-->
+        <div class="col-sm-9 d-none d-lg-block d-xl-none p-0 animate__animated animate__fadeInDown" >
           {{{body}}}
         </div>
         <!-- Main content area for smaller than lg screen-->   
-        <div class="d-block d-lg-none animate__animated animate__fadeInDown">
+        <div class="d-block d-lg-none p-0 animate__animated animate__fadeInDown">
           {{{body}}}
         </div>    
 
-        <!--Categories for lg responsive-->
+        <!--sidebar-->
         <div class="col-sm-3 d-none d-lg-block sidebar">
-          <div class="card mb-3">
+          <!--thanh quản lý của admin-->
+          {{#if lcIsAdminPage}}
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h4>
+                <i class="bi bi-kanban"></i>
+                Thanh quản lý
+              </h4>
+            </div>
+            <div class="card-body bg-light bg-light text-dark">
+              <ul class="nav flex-column ">
+                <!--Quản lý chuyên mục-->
+                <h5 class="pt-1">
+                  <i class="bi bi-bookmark"></i>
+                  Quản lý chuyên mục
+                </h5>
+                <li class="nav-item">
+                  <a class="nav-link text-dark" href="/admin/categories">Danh sách chuyên mục</a>
+                  <hr>
+                </li>
+                 <!--Quản lý nhãn-->
+                <h5>
+                  <i class="bi bi-tag"></i>
+                  Quản lý nhãn
+                </h5>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="/admin/tags">Danh sách nhãn</a>
+                  <hr>
+                </li>
+                 <!--Quản lý bài viết-->
+                 <h5>
+                  <i class="bi bi-newspaper"></i>
+                  Quản lý bài viết
+                </h5>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Thêm bài viết mới</a>
+                </li>
+                <h6>Danh sách bài viết</h6>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Đã được duyệt & chờ xuất bản</a>
+                </li>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Đã xuất bản</a>
+                </li>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Bị từ chối</a>
+                </li>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Chưa được duyệt</a>
+                  <hr>
+                </li>
+                 <!--Quản lý bài viết-->
+                 <h5>
+                  <i class="bi bi-person"></i>
+                  Quản lý tài khoản
+                </h5>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="/admin/reader">Độc giả</a>
+                </li>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Phóng viên</a>
+                </li>
+                <li class="nav-item ">
+                  <a class="nav-link text-dark" href="#">Biên tập viên</a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-footer text-center">
+              © ecNewsPaper
+            </div>
+          </div>
+          {{else}}
+          <!--Categories for lg responsive-->
+          <div class="card">
             <div class="card-header bg bg-info text-white" >
               <h4>
                 <i class="bi bi-bookmarks-fill"></i>
@@ -181,7 +283,9 @@
               {{/each}}
             </div>
           </div>
+          {{/if}}
         </div>
+
       </div>
       {{/if}}
     </div>

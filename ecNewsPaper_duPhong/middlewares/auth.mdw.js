@@ -26,3 +26,16 @@ export default function (req, res, next) {
   
     next();
   }
+
+  export function authAdmin(req, res, next) {
+    if (req.session.auth === false) {
+      req.session.retUrl = req.originalUrl;
+      return res.redirect('/account/login');
+    }
+    
+    if (req.session.authUser.Permission < 3) {
+      return res.redirect('/403');
+    }
+    res.locals.lcIsAdminPage = true;
+    next();
+  }
