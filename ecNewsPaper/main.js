@@ -13,6 +13,7 @@ import tagService from './services/tag.service.js';
 import postsRouter from './routes/posts.route.js';
 import accountRouter from './routes/account.route.js';
 import adminRouter from './routes/admin.route.js';
+<<<<<<< HEAD
 import adminCatRouter from './routes/admin-categories.route.js';
 import adminTagRouter from './routes/admin-tag.route.js';
 import adminSubCatRouter from './routes/admin-subcategories.route.js';
@@ -21,10 +22,16 @@ import adminReader from './routes/admin-reader.js';
 //auth
 import { authAdmin } from './middlewares/auth.mdw.js';
 
+=======
+import postRouter from './routes/writer.posts.route.js'
+>>>>>>> 9fd60523842983387717af881edf68ec2f4b0ae2
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
 //import { fileURLToPath } from 'url';
 //const __dirname = dirname(fileURLToPath(import.meta.url));
+
+
+
 
 
 const app = express()
@@ -58,7 +65,7 @@ app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
-  //cookie: {}
+  cookie: {secure : false}
 }));
 // Middleware xử lý dữ liệu từ form (x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true }));
@@ -93,8 +100,11 @@ app.use( async function(req,res,next){
   }
   
   res.locals.lcCategories = categories;
+<<<<<<< HEAD
   res.locals.lcIsCenter = false;
   res.locals.lcIsAdminPage =false;
+=======
+>>>>>>> 9fd60523842983387717af881edf68ec2f4b0ae2
 
   next();
 });
@@ -144,6 +154,8 @@ for (let post of top3post) {
   }
 
   const top10NewestPost = await postService.top10NewestPost(limit, offsetNP);
+
+
   for (let post of top10NewestPost) {
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
@@ -225,12 +237,17 @@ for (let post of top3post) {
  
 app.use('/posts', postsRouter);
 app.use('/account', accountRouter);
+<<<<<<< HEAD
 //admin
 app.use('/admin',authAdmin, adminRouter);
 app.use('/admin/categories',authAdmin, adminCatRouter);
 app.use('/admin/categories/subcategories',authAdmin,adminSubCatRouter);
 app.use('/admin/tags',authAdmin, adminTagRouter);
 app.use('/admin/reader',authAdmin, adminReader);
+=======
+app.use('/admin', adminRouter);
+app.use('/writer/posts', postRouter);
+>>>>>>> 9fd60523842983387717af881edf68ec2f4b0ae2
 
 app.use('/403',function (req, res, next) {
   res.render('403', { layout: false });
