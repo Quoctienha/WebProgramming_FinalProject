@@ -1,0 +1,67 @@
+<h2>Danh sách bài viết cần duyệt</h2>
+
+<button id="toggleEditorFunctions" class="btn btn-primary mb-3">Hiện chức năng
+  Editor</button>
+{{#if drafts.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Tiêu đề</th>
+        <th>Chuyên mục</th>
+        <th>Tác giả</th>
+        <th class="editor-actions" style="display: none;">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each drafts}}
+        <tr>
+          <td>{{this.title}}</td>
+          <td>{{this.category_name}}</td>
+          <td>{{this.author_name}}</td>
+          <td class="editor-actions" style="display: none;">
+            <button
+              onclick="approvePost({{this.id}})"
+              class="btn btn-success"
+            >Duyệt</button>
+            <button onclick="rejectPost({{this.id}})" class="btn btn-danger">Từ
+              chối</button>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>Không có bài viết nào cần duyệt.</p>
+{{/if}}
+
+<script>
+  // Hiển thị hoặc ẩn chức năng Editor
+  document.getElementById('toggleEditorFunctions').addEventListener('click', ()
+  => { const editorActions = document.querySelectorAll('.editor-actions');
+  editorActions.forEach(action => { if (action.style.display === 'none') {
+  action.style.display = 'table-cell';
+  document.getElementById('toggleEditorFunctions').innerText = 'Ẩn chức năng
+  Editor'; } else { action.style.display = 'none';
+  document.getElementById('toggleEditorFunctions').innerText = 'Hiện chức năng
+  Editor'; } }); }); async function approvePost(postId) { const categoryId =
+  prompt('Nhập ID chuyên mục:'); const tags = prompt('Nhập tags (cách nhau bởi
+  dấu phẩy):'); const publishTime = prompt('Nhập thời gian xuất bản (YYYY-MM-DD
+  HH:mm:ss):'); if (!categoryId || !tags || !publishTime) { alert('Thiếu thông
+  tin để duyệt bài viết.'); return; } try { const response = await
+  fetch('/editor/approve', { method: 'POST', headers: { 'Content-Type':
+  'application/json' }, body: JSON.stringify({ postId, categoryId, tags,
+  publishTime }), }); const result = await response.json();
+  alert(result.message); location.reload(); } catch (error) {
+  console.error('Error approving post:', error); alert('Lỗi khi duyệt bài
+  viết.'); } } async function rejectPost(postId) { const reason = prompt('Nhập
+  lý do từ chối:'); if (!reason) { alert('Vui lòng nhập lý do từ chối.');
+  return; } try { const response = await fetch('/editor/reject', { method:
+  'POST', headers: { 'Content-Type': 'application/json' }, body:
+  JSON.stringify({ postId, reason }), }); const result = await response.json();
+  alert(result.message); location.reload(); } catch (error) {
+  console.error('Error rejecting post:', error); alert('Lỗi khi từ chối bài
+  viết.'); } } document.addEventListener("DOMContentLoaded", () => { const
+  redirectButton = document.getElementById("redirectToDraft"); if
+  (redirectButton) { redirectButton.addEventListener("click", () => {
+  window.location.href = "/draft.hbs"; }); } });
+</script>
