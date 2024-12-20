@@ -121,31 +121,3 @@ export const rejectPost = async(PostID) =>{
 
 
 }
-export const checkAndPublishPosts = async () => {
-  try {
-    const now = new Date();
-
-    // Update posts that are ready for publishing
-    const updatedRows = await db("posts")
-      .where("TimePublic", "<=", now)
-      .where("StatusPost", "Chờ xuất bản") // Avoid already published posts
-      .update({
-        StatusPost: "Đã xuất bản",
-      });
-
-    if (updatedRows > 0) {
-      console.log(`${updatedRows} posts updated to "Đã xuất bản".`);
-    }
-  } catch (error) {
-    console.error("Error checking and publishing posts:", error);
-  }
-};
-
-/**
- * Start a periodic task to check and update posts.
- */
-export const startPublishingService = () => {
-  setInterval(async () => {
-    await checkAndPublishPosts();
-  }, 10000); // Check every 60 seconds (adjust as needed)
-};
