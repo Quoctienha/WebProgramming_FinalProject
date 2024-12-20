@@ -109,6 +109,7 @@ export default{
     countByCatId(CID) {
         return db('posts').where('CID', CID).where('TimePublic', '<=', now).count('* as total').first();
     },
+    
 
     countBySearch(keyword){
         return db('posts')
@@ -119,6 +120,46 @@ export default{
     //update
     IncreaseView(PostID) {
         return db('posts').where('PostID', PostID).increment('view', 1);
-    }   
+    } ,
+    findAllPosts() {
+        return db('posts').select('*');
+    },
+
+    addPost(post) {
+        return db('posts').insert(post);
+    },
+
+    deletePost(PostID) {
+        return db('posts').where('PostID', PostID).del();
+    },
+
+    updatePost(post) {
+        return db('posts')
+            .where('PostID', post.PostID)
+            .update({
+                PostTitle: post.PostTitle,
+                CID: post.CID,
+                SCID: post.SCID,
+                UID: post.UID,
+                TimePost: post.TimePost,
+                SumContent: post.SumContent,
+                Content: post.Content,
+                source: post.source,
+                linksource: post.linksource,
+                view: post.view,
+                Duyet: post.Duyet,
+                StatusPost: post.StatusPost,
+                Reason: post.Reason,
+                TimePublic: post.TimePublic,
+                Premium: post.Premium,
+                xoa: post.xoa
+            });
+    },
+
+    findPostsByUserID(userID) {
+        const query = `SELECT * FROM posts WHERE UID = ?`;
+        const [rows] = db.execute(query, [userID]);
+        return rows;
+    }
     
 }

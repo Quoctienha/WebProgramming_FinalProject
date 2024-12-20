@@ -32,5 +32,32 @@ export default{
         return db('users')
         .where('UserID', userID)
         .update('Password_hash', newPasswordHash);
+    },
+
+    //tìm độc giả
+    countAllReaders(){
+        return db('users').where('Permission', 0).count('* as total').first();
+    },
+    
+    findReaders(limit, offset){
+        return db('users').where('Permission', 0).orderBy('UserID', 'asc').limit(limit).offset(offset);
+    },
+
+    //tìm phóng viên
+    countAllWriters(){
+        return db('users').where('Permission', 1).count('* as total').first();
+    },
+    
+    findWriters(limit, offset){
+        return db('users').where('Permission', 1).orderBy('UserID', 'asc').limit(limit).offset(offset);
+    },
+
+    //tìm biên tập viên
+    countAllEditors(){
+        return db('users').where('Permission', 2).count('* as total').first();
+    },
+    
+    findEditors(limit, offset){
+        return db('users').where('Permission', 2).orderBy('UserID', 'asc').limit(limit).offset(offset);
     }
 }

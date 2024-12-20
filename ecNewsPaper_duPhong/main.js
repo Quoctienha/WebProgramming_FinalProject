@@ -4,13 +4,21 @@ import hbs_sections from 'express-handlebars-sections';
 import moment from 'moment';
 import session from 'express-session';
 
+//service
 import categoryService from './services/category.service.js';
 import postService from './services/post.service.js';
 import tagService from './services/tag.service.js';
 
+//route
 import postsRouter from './routes/posts.route.js';
 import accountRouter from './routes/account.route.js';
+import adminRouter from './routes/admin.route.js';
+import adminCatRouter from './routes/admin-categories.route.js';
+import adminTagRouter from './routes/admin-tag.route.js';
+import adminSubCatRouter from './routes/admin-subcategories.route.js';
 
+//auth
+import { authAdmin } from './middlewares/auth.mdw.js';
 
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
@@ -67,6 +75,7 @@ app.use(async function (req, res, next) {
   res.locals.authUser = req.session.authUser;
   next();
 });
+
 //middleware
 app.use( async function(req,res,next){
   const categorieslV1 = await categoryService.findAllCategories();
@@ -83,6 +92,8 @@ app.use( async function(req,res,next){
   }
   
   res.locals.lcCategories = categories;
+  res.locals.lcIsCenter = false;
+  res.locals.lcIsAdminPage =false;
 
   next();
 });
@@ -103,16 +114,7 @@ for (let post of top3post) {
     TName: tag.TName
   }));
 }
-  // Định dạng thời gian cho từng post
-  /*top3post.forEach(async post => {
-    post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
-    // Thêm tags vào bài viết
-    const top3postTags = await tagService.findTagByPostID(post.PostID);
-    post.Tags = top3postTags.map(tag => ({
-      TagID: tag.TagID,
-      TName: tag.TName
-    }));
-  });*/
+
   const lastPost = top3post.pop();
 
   const limit = parseInt(2);
@@ -219,10 +221,14 @@ for (let post of top3post) {
   //console.log(top10CategoriesByView);
   //console.log(newestPostsOfTop10Cat);
 })
-
+ 
 app.use('/posts', postsRouter);
 app.use('/account', accountRouter);
-
+//admin
+app.use('/admin',authAdmin, adminRouter);
+app.use('/admin/categories',authAdmin, adminCatRouter);
+app.use('/admin/categories/subcategories',authAdmin,adminSubCatRouter);
+app.use('/admin/tags',authAdmin, adminTagRouter);
 app.use('/403',function (req, res, next) {
   res.render('403', { layout: false });
 });

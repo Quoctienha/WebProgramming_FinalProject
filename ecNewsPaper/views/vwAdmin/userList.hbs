@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header h4 bg-info text-white">
-    Quản lý thẻ (Tags)
+    Quản lý {{role}}
   </div>
   <div class="card-body">
     <!-- Form thêm tag -->
@@ -27,10 +27,10 @@
             </tr>
         </thead>
         <tbody>
-            {{#each tags}}
+            {{#each users}}
             <tr>
-                <td>{{this.TagID}}</td>
-                <td>{{this.TName}}</td>
+                <td>{{this.UserID}}</td>
+                <td>{{this.UserName}}</td>
                 <td>
                     <!-- Form sửa tag -->
                     <form method="POST" action="/admin/tags/edit" class="d-inline">
@@ -91,6 +91,3 @@
   {{/if}}
   </div>
 </div>
-
-
-

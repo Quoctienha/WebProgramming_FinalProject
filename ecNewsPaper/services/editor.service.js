@@ -1,5 +1,6 @@
 import db from "../utils/db.js";
-
+import express from "express";
+const router = express.router;
 /**
  * Lấy danh sách bài viết draft do biên tập viên quản lý.
  *
@@ -7,6 +8,27 @@ import db from "../utils/db.js";
  * @returns {Promise<Array>} - Danh sách bài viết draft.
  */
 export const getDraftPostsByEditor = async (editorId) => {
+  try {
+    return await db("posts as p")
+      .join("categories as c", "p.CID", "c.CID")
+      .join("users as u", "p.UID", "u.UserID")
+      .where("EID", editorId) // Make sure 'EID' is the correct column in the 'posts' table
+      .where("p.StatusPost", "Chờ duyệt")
+      .select(
+        "p.PostTitle",
+        "p.UID",
+        "c.CName",
+        "u.UserName",
+        "c.EID" // If you need to get the editor ID from categories, this is fine
+      );
+  } catch (error) {
+    console.error("Error fetching draft posts:", error);
+    throw error;
+  }
+};
+
+/* Show bài viết cần duyệt */
+export const getPendingPosts = async () => {
   const query = `
         SELECT 
           p.PostID, 
@@ -18,18 +40,19 @@ export const getDraftPostsByEditor = async (editorId) => {
           p.Content,
           p.source,
           p.linksource,
-          p.Premium
+          p.Premium,
+          p.StatusPost
         FROM posts p
         JOIN categories c ON p.CID = c.CID
         JOIN users u ON p.UID = u.UserID
-        JOIN categorymanager cm ON cm.CID = c.CID
-        WHERE p.StatusPost = 'Chờ duyệt' 
+        WHERE p.StatusPost = 'Chờ duyệt'
       `;
-
+  console.log(query);
   try {
-    return await db.query(query, [editorId]);
+    const result = await db.query(query);
+    return result;
   } catch (error) {
-    console.error("Error fetching draft posts:", error);
+    console.error("Error fetching pending posts:", error);
     throw error;
   }
 };

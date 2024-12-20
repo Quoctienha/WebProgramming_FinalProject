@@ -24,10 +24,11 @@ router.get('/is-available', async function(req, res){
 
 //Login
 router.get('/login', async function (req, res) {
+  const message = req.query.message || false
     res.render('vwAccount/login', {
       layout: 'account_layout',
       showErrors: false, // Reset errors on the GET request
-      message:false
+      message: message
     });
 });
 // Login route
@@ -104,16 +105,18 @@ router.post('/register', async function(req, res){
 
 //profile
 router.get('/profile', authPremium, function (req, res) {
+    res.locals.lcIsCenter = true;
     res.render('vwAccount/profile', {
-      layout: 'account_layout',
+      //layout: 'account_layout',
       user: req.session.authUser
     });
 });
 
 //chỉnh sửa profile
 router.get('/patch', async function(req, res){
+  res.locals.lcIsCenter = true;
   res.render('vwAccount/editProfile', {
-    layout: 'account_layout',
+    //layout: 'account_layout',
     user: req.session.authUser
   });
 });

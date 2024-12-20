@@ -109,6 +109,7 @@ export default{
     countByCatId(CID) {
         return db('posts').where('CID', CID).where('TimePublic', '<=', now).count('* as total').first();
     },
+    
 
     countBySearch(keyword){
         return db('posts')

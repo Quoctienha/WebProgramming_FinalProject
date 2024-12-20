@@ -10,17 +10,29 @@ import categoryService from "./services/category.service.js";
 import postService from "./services/post.service.js";
 import tagService from "./services/tag.service.js";
 
+//route
 import postsRouter from "./routes/posts.route.js";
 import accountRouter from "./routes/account.route.js";
 import adminRouter from "./routes/admin.route.js";
-import editorRouter from "./routes/editor.route.js"; // Import route cho editor
-import { ensureEditor } from "./middlewares/auth.mdw.js"; // Middleware kiểm tra quyền biên tập viên
+import adminCatRouter from "./routes/admin-categories.route.js";
+import adminTagRouter from "./routes/admin-tag.route.js";
+import adminSubCatRouter from "./routes/admin-subcategories.route.js";
+import adminReader from "./routes/admin-reader.js";
 
-// Khởi tạo ứng dụng
+//auth
+import { authAdmin } from "./middlewares/auth.mdw.js";
+
+import postRouter from "./routes/writer.posts.route.js";
+//Xác định thư mục hiện tại của tệp
+//import { dirname, format } from 'path';
+//import { fileURLToPath } from 'url';
+//const __dirname = dirname(fileURLToPath(import.meta.url));
+
+import editorRouter from "./routes/editor.route.js";
+
 const app = express();
 const port = 3030;
 
-// -------------------------- Cấu hình View Engine ---------------------------
 app.engine(
   "hbs",
   engine({
@@ -28,12 +40,15 @@ app.engine(
     defaultLayout: "main_layout",
     helpers: {
       section: hbs_sections(),
+
       Equal(a, b) {
         return Number(a) === Number(b);
       },
+
       Increment(value) {
         return value + 1;
       },
+
       Decrement(value) {
         return Math.max(1, value - 1);
       },
@@ -42,19 +57,16 @@ app.engine(
 );
 app.set("view engine", "hbs");
 app.set("views", "./views");
-
-// -------------------------- Cấu hình Middleware ---------------------------
-// Trust proxy và cấu hình session
-app.set("trust proxy", 1);
+app.set("trust proxy", 1); // trust first proxy
 app.use(
   session({
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: false },
   })
 );
-
-// Middleware xử lý dữ liệu từ form
+// Middleware xử lý dữ liệu từ form (x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true }));
 
 // Cung cấp file tĩnh
@@ -86,6 +98,8 @@ app.use(async (req, res, next) => {
     );
 
     res.locals.lcCategories = categories;
+    res.locals.lcIsCenter = false;
+    res.locals.lcIsAdminPage = false;
     next();
   } catch (error) {
     console.error("Error loading categories:", error);
@@ -93,79 +107,145 @@ app.use(async (req, res, next) => {
   }
 });
 
-// -------------------------- Route chính ---------------------------
-app.get("/", async (req, res) => {
-  try {
-    // Top 3 bài viết của tuần trước
-    const top3post = await postService.top3PostsLastWeek();
-    for (const post of top3post) {
-      post.TimePublic = moment(post.TimePublic).format("DD/MM/YYYY HH:mm:ss");
-      const tags = await tagService.findTagByPostID(post.PostID);
-      post.Tags = tags.map((tag) => ({ TagID: tag.TagID, TName: tag.TName }));
-    }
-    const lastPost = top3post.pop();
-
-    // Top 10 bài viết theo các tiêu chí
-    const limit = 2;
-    const nPages = 5;
-    const { pageMV = 1, pageNP = 1, pageTC = 1 } = req.query;
-
-    const top10MostView = await fetchTopPosts(
-      postService.top10MostView,
-      pageMV,
-      limit
-    );
-    const top10NewestPost = await fetchTopPosts(
-      postService.top10NewestPost,
-      pageNP,
-      limit
-    );
-    const top10CategoriesByView = await postService.top10CategoriesByView(
-      limit,
-      (pageTC - 1) * limit
-    );
-
-    // Tạo danh sách bài viết mới nhất của từng chuyên mục
-    const newestPostsOfTop10Cat = await Promise.all(
-      top10CategoriesByView.map((cat) =>
-        postService.findNewestPostByCID(cat.CID)
-      )
-    );
-    formatPosts(newestPostsOfTop10Cat);
-
-    // Phân trang
-    const pageNumbersMV = generatePagination(pageMV, nPages);
-    const pageNumbersNP = generatePagination(pageNP, nPages);
-    const pageNumbersTC = generatePagination(pageTC, nPages);
-
-    res.render("home", {
-      top2post: top3post,
-      lastPost,
-      top10MostView,
-      top10NewestPost,
-      newestPostsOfTop10Cat,
-      pageNumbersMV,
-      current_pageMV: +pageMV,
-      pageNumbersNP,
-      current_pageNP: +pageNP,
-      pageNumbersTC,
-      current_pageTC: +pageTC,
-      totalPages: nPages,
-    });
-  } catch (error) {
-    console.error("Error loading home page:", error);
-    res.status(500).send("Internal Server Error");
+//route
+app.get("/", async function (req, res) {
+  //top 3 posts of last week
+  const top3post = await postService.top3PostsLastWeek();
+  // Duyệt qua từng bài viết và thêm tag vào mỗi bài viết
+  for (let post of top3post) {
+    // Định dạng thời gian cho từng post
+    post.TimePublic = moment(post.TimePublic).format("DD/MM/YYYY HH:mm:ss");
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID);
+    // Thêm tags vào bài viết
+    post.Tags = tags.map((tag) => ({
+      TagID: tag.TagID,
+      TName: tag.TName,
+    }));
   }
+
+  const lastPost = top3post.pop();
+
+  const limit = parseInt(2);
+  const nPages = parseInt(5);
+  //current pages
+  const current_pageMV = parseInt(req.query.pageMV) || 1; // top 10 Most Views
+  const current_pageNP = parseInt(req.query.pageNP) || 1; // top 10 Newest Posts
+  const current_pageTC = parseInt(req.query.pageTC) || 1; // top 10 Categories By Views
+
+  //offset
+  const offsetMV = (current_pageMV - 1) * limit; // top 10 Most Views
+  const offsetNP = (current_pageNP - 1) * limit; // top 10 Newest Posts
+  const offsetTC = (current_pageTC - 1) * limit; // top 10 Categories By Views
+
+  const top10MostView = await postService.top10MostView(limit, offsetMV);
+  for (let post of top10MostView) {
+    // Định dạng thời gian cho từng post
+    post.TimePublic = moment(post.TimePublic).format("DD/MM/YYYY HH:mm:ss");
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID);
+    // Thêm tags vào bài viết
+    post.Tags = tags.map((tag) => ({
+      TagID: tag.TagID,
+      TName: tag.TName,
+    }));
+  }
+
+  const top10NewestPost = await postService.top10NewestPost(limit, offsetNP);
+
+  for (let post of top10NewestPost) {
+    // Định dạng thời gian cho từng post
+    post.TimePublic = moment(post.TimePublic).format("DD/MM/YYYY HH:mm:ss");
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID);
+    // Thêm tags vào bài viết
+    post.Tags = tags.map((tag) => ({
+      TagID: tag.TagID,
+      TName: tag.TName,
+    }));
+  }
+
+  const top10CategoriesByView = await postService.top10CategoriesByView(
+    limit,
+    offsetTC
+  );
+  const newestPostsOfTop10Cat = [];
+  for (let i = 0; i < top10CategoriesByView.length; i++) {
+    newestPostsOfTop10Cat.push(
+      await postService.findNewestPostByCID(top10CategoriesByView[i].CID)
+    );
+  }
+  for (let post of newestPostsOfTop10Cat) {
+    // Định dạng thời gian cho từzng post
+    post.TimePublic = moment(post.TimePublic).format("DD/MM/YYYY HH:mm:ss");
+    // Truy vấn các tag của bài viết
+    const tags = await tagService.findTagByPostID(post.PostID);
+    // Thêm tags vào bài viết
+    post.Tags = tags.map((tag) => ({
+      TagID: tag.TagID,
+      TName: tag.TName,
+    }));
+  }
+
+  //page numbers
+  const pageNumbersMV = [];
+  for (let i = 0; i < nPages; i++) {
+    pageNumbersMV.push({
+      value: i + 1,
+      active: i + 1 === +current_pageMV,
+    });
+  }
+
+  const pageNumbersNP = [];
+  for (let i = 0; i < nPages; i++) {
+    pageNumbersNP.push({
+      value: i + 1,
+      active: i + 1 === +current_pageNP,
+    });
+  }
+
+  const pageNumbersTC = [];
+  for (let i = 0; i < nPages; i++) {
+    pageNumbersTC.push({
+      value: i + 1,
+      active: i + 1 === +current_pageTC,
+    });
+  }
+
+  res.render("home", {
+    top2post: top3post,
+    lastPost: lastPost,
+    top10MostView: top10MostView,
+    top10NewestPost: top10NewestPost,
+    newestPostsOfTop10Cat: newestPostsOfTop10Cat,
+
+    pageNumbersMV: pageNumbersMV,
+    current_pageMV: current_pageMV,
+
+    pageNumbersNP: pageNumbersNP,
+    current_pageNP: current_pageNP,
+
+    pageNumbersTC: pageNumbersTC,
+    current_pageTC: current_pageTC,
+
+    totalPages: nPages,
+  });
+  //console.log(top10CategoriesByView);
+  //console.log(newestPostsOfTop10Cat);
 });
 
-// -------------------------- Route khác ---------------------------
 app.use("/posts", postsRouter);
 app.use("/account", accountRouter);
+//admin
+app.use("/admin", authAdmin, adminRouter);
+app.use("/admin/categories", authAdmin, adminCatRouter);
+app.use("/admin/categories/subcategories", authAdmin, adminSubCatRouter);
+app.use("/admin/tags", authAdmin, adminTagRouter);
+app.use("/admin/reader", authAdmin, adminReader);
 app.use("/admin", adminRouter);
-app.use("/editor", ensureEditor, editorRouter);
-
-// -------------------------- Route trang lỗi ---------------------------
-app.use("/403", (req, res) => {
+app.use("/writer/posts", postRouter);
+app.use("/editor", editorRouter);
+app.use("/403", function (req, res, next) {
   res.render("403", { layout: false });
 });
 app.get("/vwEditor/drafts.hbs", (req, res) => {

@@ -288,7 +288,7 @@ router.get('/IncreaseView', async function( req, res) {
 //Comment
 //thêm comment
 router.post('/addComment',authPremium, async function(req, res) {
-  const PostID = req.query.PostID;
+  const PostID = req.body.PostID;
   const UID = req.session.authUser.UserID; // Lấy ID người dùng từ session
   const Comment = req.body.Comment?.trim(); // Loại bỏ khoảng trắng thừa
 
@@ -307,8 +307,8 @@ router.get('/addComment', async function(req, res) {
 
 //Xoá
 router.post('/delComment', async function (req, res) {
-  await commentService.delete(req.query.ComID);
-  res.redirect(`/posts/detail?id=${req.query.PostID}`);
+  await commentService.delete(req.body.ComID);
+  res.redirect(`/posts/detail?id=${req.body.PostID}`);
 });
 
 router.get('/downloadPDF',authPremium, async function (req, res){

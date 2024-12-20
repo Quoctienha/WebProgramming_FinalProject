@@ -23,6 +23,10 @@ export default{
         return db('post_tags').where('TagID', TagID).count('* as total').first();
     },
 
+    countAllTag() {
+        return db('tag').count('* as total').first();
+    },
+
     findTagBytagID(TagID){
         return db('tag').where('TagID', TagID).first();
     },
