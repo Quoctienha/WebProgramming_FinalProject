@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Middleware: Kiểm tra quyền biên tập viên
 router.use(ensureEditor);
-
+router.use(express.json());
 /**
  * Route: Hiển thị danh sách bài viết cần duyệt
  * Method: GET
@@ -22,18 +22,20 @@ router.get("/drafts", auth, async (req, res) => {
     }
 
     const drafts = await editorService.getDraftPostsByEditor(editorId);
-    console.log(drafts);
-    if (!drafts || drafts.length === 0) {
-      return res.render("vwEditor/drafts", {
-        drafts: [],
-        message: "No drafts available.",
-      });
-    }
-    res.render("vwEditor/drafts", { drafts });
+    const drafts2=await editorService.getAcceptedPostsByEditor(editorId);
+    const drafts3=await editorService.getExportedPostsByEditor(editorId);
+    const drafts4=await editorService.getDenyPostsByEditor(editorId);
+   
+ 
+    res.render("vwEditor/drafts", {   drafts,
+      drafts2,
+      drafts3,
+      drafts4 });
   } catch (error) {
     console.error("Error fetching draft posts:", error);
     res.status(500).send("An error occurred while fetching drafts.");
   }
+  
 });
 
 /**
@@ -42,15 +44,14 @@ router.get("/drafts", auth, async (req, res) => {
  */
 router.post("/approve", async (req, res) => {
   try {
-    const { postId, categoryId, tags, publishTime } = req.body;
+    const { PostID } = req.body; // Correctly extract PostID from req.body
+    console.log("PostID received:", PostID); // Log the received PostID
 
-    // Kiểm tra dữ liệu đầu vào
-    if (!postId || !categoryId || !tags || !publishTime) {
-      return res.status(400).send("Thiếu thông tin để duyệt bài viết.");
+    if (!PostID) {
+      return res.status(400).send("Thiếu thông tin để duyệt bài viết."); // Missing PostID
     }
 
-    // Duyệt bài viết
-    await editorService.approvePost(postId, categoryId, tags, publishTime);
+    await editorService.approvePost(PostID);
     res.json({ message: "Bài viết đã được duyệt." });
   } catch (error) {
     console.error("Error approving post:", error);
@@ -58,24 +59,25 @@ router.post("/approve", async (req, res) => {
   }
 });
 
+
+
 /**
  * Route: Từ chối bài viết
  * Method: POST
  */
 router.post("/reject", async (req, res) => {
   try {
-    const { postId, reason } = req.body;
+    const { PostID } = req.body; // Correctly extract PostID from req.body
+    console.log("PostID received:", PostID); // Log the received PostID
 
-    // Kiểm tra dữ liệu đầu vào
-    if (!postId || !reason) {
-      return res.status(400).send("Thiếu thông tin để từ chối bài viết.");
+    if (!PostID) {
+      return res.status(400).send("Thiếu thông tin để duyệt bài viết."); // Missing PostID
     }
 
-    // Từ chối bài viết
-    await editorService.rejectPost(postId, reason);
-    res.json({ message: "Bài viết đã bị từ chối." });
+    await editorService.rejectPost(PostID);
+    res.json({ message: "Bài viết đã được từ chối" });
   } catch (error) {
-    console.error("Error rejecting post:", error);
+    console.error("Error approving post:", error);
     res.status(500).send("Lỗi khi từ chối bài viết.");
   }
 });
