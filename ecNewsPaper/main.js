@@ -21,7 +21,7 @@ import adminReader from "./routes/admin-reader.js";
 
 //auth
 import { authAdmin } from "./middlewares/auth.mdw.js";
-
+import { startPublishingService } from "./services/editor.service.js";
 import postRouter from "./routes/writer.posts.route.js";
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
@@ -286,7 +286,7 @@ async function fetchTopPosts(serviceMethod, currentPage, limit) {
   formatPosts(posts);
   return posts;
 }
-
+startPublishingService();
 /**
  * Định dạng bài viết (chuyển đổi thời gian, thêm tag).
  */
