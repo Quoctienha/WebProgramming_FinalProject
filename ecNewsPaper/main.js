@@ -11,11 +11,14 @@ import tagService from './services/tag.service.js';
 import postsRouter from './routes/posts.route.js';
 import accountRouter from './routes/account.route.js';
 import adminRouter from './routes/admin.route.js';
-
+import postRouter from './routes/writer.posts.route.js'
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
 //import { fileURLToPath } from 'url';
 //const __dirname = dirname(fileURLToPath(import.meta.url));
+
+
+
 
 
 const app = express()
@@ -49,7 +52,7 @@ app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
-  //cookie: {}
+  cookie: {secure : false}
 }));
 // Middleware xử lý dữ liệu từ form (x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true }));
@@ -84,7 +87,6 @@ app.use( async function(req,res,next){
   }
   
   res.locals.lcCategories = categories;
-  res.locals.lcIsCenter = false;
 
   next();
 });
@@ -143,6 +145,8 @@ for (let post of top3post) {
   }
 
   const top10NewestPost = await postService.top10NewestPost(limit, offsetNP);
+
+
   for (let post of top10NewestPost) {
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');
@@ -225,6 +229,7 @@ for (let post of top3post) {
 app.use('/posts', postsRouter);
 app.use('/account', accountRouter);
 app.use('/admin', adminRouter);
+app.use('/writer/posts', postRouter);
 
 app.use('/403',function (req, res, next) {
   res.render('403', { layout: false });
