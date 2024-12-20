@@ -71,7 +71,12 @@
             </b>
           </button>
         </form>
-        <a href="/editor/drafts" class="btn btn-primary">Go to Draft</a>
+        {{#if authUser.Permission}}
+        {{#if (Equal authUser.Permission 2)}}
+           <a href="/editor/drafts" class="btn btn-primary">Go to Draft</a>
+        {{/if}}
+        {{/if}}
+        
 
         <!-- Categories (small screens) -->
         <div class="d-block d-lg-none">
