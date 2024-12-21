@@ -1,6 +1,9 @@
 import express from 'express';
 import postService from '../services/post.service.js';
 import auth from '../middlewares/auth.mdw.js';
+import multer  from 'multer'
+import db from "../utils/db.js"
+
 
 const router = express.Router();
 
@@ -14,6 +17,8 @@ router.get('/', auth, async (req, res) => {
     res.render('vwWriter/posts', { posts });
 });
 
+
+
 // Display form to add a new post
 router.get('/add', auth, async (req, res) => {
     const categories = await postService.findAllCategories();
@@ -21,6 +26,42 @@ router.get('/add', auth, async (req, res) => {
     const tags = await postService.findAllTags();
     res.render('vwWriter/addPost', { categories, subcategories, tags });
 });
+
+
+// Thêm upload ảnh 
+router.get('/upload', function(req,res){
+    res.render('vwWriter/addPost');
+})
+//const upload = multer({ dest: 'uploads/' })
+router.post('/upload', function(req, res){
+   // console.log(req.body);
+
+   const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './static/imgs/posts')
+    },
+        filename: function (req, file, cb) {
+        cb(null, file.originalname);
+        }
+    });
+
+   
+    const upload = multer({storage});
+    upload.array('avatar, 5') (req, res, function(err){
+        console.log(req.body);
+        if(err){
+            console.error(err);
+        } else {
+            res.render('vwWriter/addPost');
+        }
+    });
+    
+
+});
+
+
+
+
 
 // Handle adding a new post
 router.post('/add', auth, async (req, res) => {
@@ -35,23 +76,48 @@ router.post('/add', auth, async (req, res) => {
         source: req.body.source,
         linksource: req.body.linksource,
         view: 0,
-        Duyet: 0,
-        StatusPost: 'Chưa được duyệt',
+        StatusPost: 'Chờ duyệt',
         Reason: req.body.Reason || null,
         TimePublic: req.body.TimePublic || null,
-        Premium: req.body.Premium || 0, 
-        xoa: 0
+        Premium: req.body.Premium || 0,
     };
 
-    const post = await postService.addPost(newPost);
+    const query = `
+        INSERT INTO posts (PostTitle, CID, SCID, UID, TimePost, SumContent, Content, source, linksource, view, StatusPost, Reason, TimePublic, Premium)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-    // // Handle tags (if any are selected)
-    // if (req.body.Tags && req.body.Tags.length > 0) {
-    //     await postService.addTagsToPost(post.PostID, req.body.Tags); // Assuming you have a method to save tags for a post
-    // }
+    const values = [
+        newPost.PostTitle,
+        newPost.CID,
+        newPost.SCID,
+        newPost.UID,
+        newPost.TimePost,
+        newPost.SumContent,
+        newPost.Content,
+        newPost.source,
+        newPost.linksource,
+        newPost.view,
+        newPost.StatusPost,
+        newPost.Reason,
+        newPost.TimePublic,
+        newPost.Premium,
+    ];
 
-    res.redirect('/writer/posts');
+    try {
+        // Execute the SQL query to insert the post
+        await postService.addPost(newPost);
+
+        // Redirect to the writer page after successful insertion
+        res.redirect('/writer');
+    } catch (error) {
+        console.error('Error inserting post:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
+
+
 
 // Route for updating a post
 router.post('/edit', auth, async (req, res) => {
@@ -67,12 +133,10 @@ router.post('/edit', auth, async (req, res) => {
         source: req.body.source,
         linksource: req.body.linksource,
         view: 0,
-        Duyet: 0,
-        StatusPost: 'Chưa được duyệt',
+        StatusPost: 'Chờ duyệt',
         Reason: req.body.Reason || null,
         TimePublic: req.body.TimePublic || null,
         Premium: req.body.Premium || 0,
-        xoa: 0
     };
 
     await postService.updatePost(updatedPost);
@@ -82,7 +146,7 @@ router.post('/edit', auth, async (req, res) => {
     //     await postService.updateTagsForPost(updatedPost.PostID, req.body.Tags); // Assuming you have a method to update tags for a post
     // }
 
-    res.redirect('/writer/posts');
+    res.redirect('/writer');
 });
 
 
@@ -108,7 +172,7 @@ router.get('/edit/:PostID', auth, async (req, res) => {
 router.post('/delete', auth, async (req, res) => {
     const { PostID } = req.body;
     await postService.deletePost(PostID);
-    res.redirect('/writer/posts');
+    res.redirect('/writer');
 });
 
 export default router;

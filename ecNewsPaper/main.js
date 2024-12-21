@@ -22,7 +22,7 @@ import adminReader from "./routes/admin-reader.js";
 //auth
 import { authAdmin } from "./middlewares/auth.mdw.js";
 import { startPublishingService } from "./middlewares/postTCheck.mdw.js";
-import postRouter from "./routes/writer.posts.route.js";
+import postRouter from "./routes/writer.route.js";
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
 //import { fileURLToPath } from 'url';
@@ -243,7 +243,7 @@ app.use("/admin/categories/subcategories", authAdmin, adminSubCatRouter);
 app.use("/admin/tags", authAdmin, adminTagRouter);
 app.use("/admin/reader", authAdmin, adminReader);
 app.use("/admin", adminRouter);
-app.use("/writer/posts", postRouter);
+app.use("/writer", postRouter);
 app.use("/editor", editorRouter);
 app.use("/403", function (req, res, next) {
   res.render("403", { layout: false });

@@ -69,10 +69,6 @@ router.post('/login', async function(req, res) {
   req.session.authUser.DayOfBirth = moment(user.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD');
   req.session.authUserUID = user.UserID;  // Storing UserID
 
-  if (user.Permission === 1) {
-    req.session.authUserID = user.UserID;
-    return res.redirect('/writer/posts');
-  }
 
   // Xử lý redirect nếu không phải người dùng có quyền viết
   const retUrl = req.session.retUrl || '/';

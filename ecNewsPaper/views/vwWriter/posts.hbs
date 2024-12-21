@@ -3,7 +3,7 @@
     <hr>
 
     <!-- Button to add a new post -->
-    <a href="/writer/posts/add" class="btn btn-success mb-4">
+    <a href="/writer/add" class="btn btn-success mb-4">
         Thêm bài viết
         <i class="bi bi-plus-lg"></i>
     </a>
@@ -35,13 +35,13 @@
                 <td>{{this.StatusPost}}</td>
                 <td>
                     <!-- Link to edit post -->
-                    <a href="/writer/posts/edit/{{this.PostID}}" class="btn btn-warning">
+                    <a href="/writer/edit/{{this.PostID}}" class="btn btn-warning">
                         Sửa
                         <i class="bi bi-pencil-fill"></i>
                     </a>
 
                     <!-- Form to delete post -->
-                    <form method="POST" action="/writer/posts/delete" class="d-inline"
+                    <form method="POST" action="/writer/delete" class="d-inline"
                         onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
                         <input type="hidden" name="PostID" value="{{this.PostID}}">
                         <button type="submit" class="btn btn-danger">
