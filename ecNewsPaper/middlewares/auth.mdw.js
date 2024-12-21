@@ -45,7 +45,17 @@ export function ensureEditor(req, res, next) {
   }
   next();
 }
-
+export function ensureWriter(req, res, next) {
+  if (req.session.auth === false) {
+    req.session.retUrl = req.originalUrl;
+    return res.redirect("/account/login");
+  }
+  if (req.session.authUser.Permission !== 1) {
+    // Giả sử Permission = 1 là quyền writer
+    return res.status(403).send("Bạn không có quyền truy cập vào khu vực này.");
+  }
+  next();
+}
 
   export function authAdmin(req, res, next) {
     if (req.session.auth === false) {

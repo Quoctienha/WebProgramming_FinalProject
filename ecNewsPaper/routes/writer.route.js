@@ -4,9 +4,10 @@ import auth from '../middlewares/auth.mdw.js';
 import multer  from 'multer'
 import db from "../utils/db.js"
 
-
+import { ensureWriter } from '../middlewares/auth.mdw.js';
 const router = express.Router();
-
+router.use(ensureWriter);
+router.use(express.json());
 // Route to display all posts for a writer
 router.get('/', auth, async (req, res) => {
     const userUID = req.session.authUserUID;  // Get the UID stored in session during login
