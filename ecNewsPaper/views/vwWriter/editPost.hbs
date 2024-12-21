@@ -1,141 +1,117 @@
-<div class="container mt-4">
-    <h2>Sửa bài viết</h2>
-    <hr>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa Bài Viết</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Sửa bài viết</h2>
+        <hr>
 
-    <form method="POST" action="/writer/edit">
-        <input type="hidden" name="PostID" value="{{post.PostID}}">
+        <form method="POST" action="/writer/edit">
+            <input type="hidden" name="PostID" value="{{post.PostID}}">
 
-        <div class="form-group mb-2">
-            <label for="PostTitle">Tiêu đề bài viết</label>
-            <input type="text" name="PostTitle" id="PostTitle" class="form-control" value="{{post.PostTitle}}" required>
-        </div>
+            <div class="form-group mb-2">
+                <label for="PostTitle">Tiêu đề bài viết</label>
+                <input type="text" name="PostTitle" id="PostTitle" class="form-control" value="{{post.PostTitle}}" required>
+            </div>
 
-        <div class="form-group mb-2">
-            <label for="CID">Danh mục</label>
-            <select name="CID" id="CID" class="form-control" required>
-                {{#each categories}}
-                <option value="{{this.CID}}" {{#Equal this.CID post.CID}}selected{{/Equal}}>{{this.CName}}</option>
-                {{/each}}
-            </select>
-        </div>
+            <div class="form-group mb-2">
+                <label for="CID">Danh mục</label>
+                <select name="CID" id="CID" class="form-control" required>
+                    {{#each categories}}
+                    <option value="{{this.CID}}" {{#Equal this.CID post.CID}}selected{{/Equal}}>{{this.CName}}</option>
+                    {{/each}}
+                </select>
+            </div>
 
-         <div class="form-group mb-2">
-            <label for="SCID">Chuyên mục phụ</label>
-            <select name="SCID" id="SCID" class="form-control">
-                <option value="">Chọn chuyên mục phụ</option>
-            </select>
-        </div>
-        <script>
-            const subcategories = [
-                {{#each subcategories}}
-                { CID: "{{this.CID}}", SCID: "{{this.SCID}}", SCName: "{{this.SCName}}" },
-                {{/each}}
-            ];
-            document.getElementById('CID').addEventListener('change', function() {
-                const selectedCID = this.value;
-                const subcategorySelect = document.getElementById('SCID');
-                subcategorySelect.innerHTML = '<option value="">Chọn chuyên mục phụ</option>';
-                subcategories.forEach(function(subcategory) {
-                    if (subcategory.CID === selectedCID) {
-                        const option = document.createElement('option');
-                        option.value = subcategory.SCID;
-                        option.text = subcategory.SCName;
-                        subcategorySelect.appendChild(option);
-                    }
-                });
+            <div class="form-group mb-2">
+                <label for="SCID">Chuyên mục phụ</label>
+                <select name="SCID" id="SCID" class="form-control">
+                    <option value="">Chọn chuyên mục phụ</option>
+                    {{#each subcategories}}
+                    <option value="{{this.SCID}}" {{#Equal this.SCID post.SCID}}selected{{/Equal}}>{{this.SCName}}</option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="SumContent ">Tóm tắt nội dung</label>
+                <textarea name="SumContent" id="SumContent" class="form-control" required>{{post.SumContent}}</textarea>
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="Content">Nội dung bài viết</label>
+                <textarea name="Content" id="Content" class="form-control">{{post.Content}}</textarea>
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="source">Nguồn</label>
+                <input type="text" name="source" id="source" class="form-control" value="{{post.source}}">
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="linksource">Link nguồn</label>
+                <input type="text" name="linksource" id="linksource" class="form-control" value="{{post.linksource}}">
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="view">Lượt xem</label>
+                <input type="number" name="view" id="view" class="form-control" value="{{post.view}}">
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="Reason">Lý do</label>
+                <input type="text" name="Reason" id="Reason" class="form-control" value="{{post.Reason}}">
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="TimePublic">Thời gian công khai</label>
+                <input type="datetime-local" name="TimePublic" id="TimePublic" class="form-control" value="{{post.TimePublic}}">
+            </div>
+
+            <div class="form-group mb-2">
+                <label for="Premium">Premium</label>
+                <input type="number" name="Premium" id="Premium" class="form-control" value="{{post.Premium}}">
+            </div>
+
+            <button type="submit" class="btn btn-warning">
+                Cập nhật bài viết
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let editorContent;
+
+        // Initialize CKEditor
+        ClassicEditor
+            .create(document.querySelector('#Content'))
+            .then(editor => {
+                editorContent = editor; // Store the editor instance
+                console.log("CKEditor initialized successfully.");
+            })
+            .catch(error => {
+                console.error("Error initializing CKEditor :", error);
             });
-        </script>
 
-        <div class="form-group mb-2">
-            <label for="SumContent">Tóm tắt nội dung</label>
-            <textarea name="SumContent" id="SumContent" class="form-control" required>{{post.SumContent}}</textarea>
-        </div>
-
-        <div class="form-group mb-2">
-            <label for="Content">Nội dung bài viết</label>
-            <div name="ContentEditor" id="ContentEditor" class="form-control" required>{{post.Content}}</div>
-        </div>
-
-        <input type="hidden" name="Content" id="Content">
-
-        <div class="form-group mb-2">
-            <label for="source">Nguồn</label>
-            <input type="text" name="source" id="source" class="form-control" value="{{post.source}}">
-        </div>
-
-        <div class="form-group mb-2">
-            <label for="linksource">Link nguồn</label>
-            <input type="text" name="linksource" id="linksource" class="form-control" value="{{post.linksource}}">
-        </div>
-
-        <div class="form-group mb-2">
-            <label for="view">Lượt xem</label>
-            <input type="number" name="view" id="view" class="form-control" value="{{post.view}}">
-        </div>
-
-        <div class="form-group mb-2">
-            <label for="Reason">Lý do</label>
-            <input type="text" name="Reason" id="Reason" class="form-control" value="{{post.Reason}}">
-        </div>
-
-        <div class="form-group mb-2">
-            <label for="TimePublic">Thời gian công khai</label>
-            <input type="datetime-local" name="TimePublic" id="TimePublic" class="form-control"
-                value="{{post.TimePublic}}">
-        </div>
-
-        <div class="form-group mb-2">
-            <label for="Premium">Premium</label>
-            <input type="number" name="Premium" id="Premium" class="form-control" value="{{post.Premium}}">
-        </div>
-
-        {{!-- <div class="form-group mb-2">
-            <label for="Tags">Chọn tags</label>
-            <select name="Tags" id="Tags" class="form-control" multiple>
-                {{#each tags}}
-                <option value="{{this.TagID}}" {{#if (contains postTags this.TagID)}}selected{{/if}}>{{this.TNAME}}
-                </option>
-                {{/each}}
-            </select>
-        </div> --}}
-
-
-        <button type="submit" class="btn btn-warning">
-            Cập nhật bài viết
-        </button>
-    </form>
-</div>
-
-<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
-
-<script>
-    let editorContent;
-
-    // Initialize CKEditor for Content field
-    ClassicEditor
-        .create(document.querySelector('#ContentEditor'))
-        .then(editor => {
-            editorContent = editor;  // Store the editor instance for Content
-        })
-        .catch(error => {
-            console.error("Error initializing CKEditor for Content:", error);
+        // Handle form submission
+        const editPostForm = document.querySelector('form');
+        editPostForm.addEventListener('submit', function (event) {
+            if (editorContent) {
+                const contentData = editorContent.getData(); // Get editor content
+                console.log("Submitting content:", contentData); // Debugging log
+                document.getElementById('Content').value = contentData; // Assign content to the same field
+                console.log("Content before submission:", document.getElementById('Content').value); // Log content before submission
+            } else {
+                console.error("CKEditor instance is not available.");
+                event.preventDefault(); // Prevent submission if CKEditor fails
+            }
         });
-
-    // Handle form submission to validate and set Content field
-    const editPostForm = document.querySelector('form');
-    editPostForm.addEventListener('submit', function (event) {
-        // Check TimePublic field
-        const timePublicField = document.getElementById('TimePublic');
-        if (!timePublicField.value) {
-            event.preventDefault(); // Prevent form submission
-            alert('Vui lòng chọn thời gian công khai!');
-            return;
-        }
-
-        // Handle CKEditor Content field
-        if (editorContent) {
-            const contentData = editorContent.getData();  // Get the editor content
-            document.getElementById('Content').value = contentData;  // Assign it to the hidden input
-        }
-    });
-</script>
+    </script>
+</body>
+</html>

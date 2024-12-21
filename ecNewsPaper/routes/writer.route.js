@@ -61,6 +61,7 @@ router.post('/upload', function(req, res){
 });
 
 
+router.use(express.urlencoded({ extended: true }));
 
 
 
@@ -122,34 +123,38 @@ router.post('/add', auth, async (req, res) => {
 
 // Route for updating a post
 router.post('/edit', auth, async (req, res) => {
-    const updatedPost = {
-        PostID: req.body.PostID,
-        PostTitle: req.body.PostTitle,
-        CID: req.body.CID,
-        SCID: req.body.SCID || null,
-        UID: req.session.authUserUID, // Retrieve UID from session
-        TimePost: req.body.TimePost,
-        SumContent: req.body.SumContent,
-        Content: req.body.Content,
-        source: req.body.source,
-        linksource: req.body.linksource,
-        view: 0,
-        StatusPost: 'Chờ duyệt',
-        Reason: req.body.Reason || null,
-        TimePublic: req.body.TimePublic || null,
-        Premium: req.body.Premium || 0,
-    };
+    try {
+        console.log("Request body:", req.body); // Debugging line to check incoming data
 
-    await postService.updatePost(updatedPost);
+        const updatedPost = {
+            PostID: req.body.PostID,
+            PostTitle: req.body.PostTitle,
+            CID: req.body.CID,
+            SCID: req.body.SCID || null,
+            UID: req.session.authUserUID, // Retrieve UID from session
+            TimePost: req.body.TimePost,
+            SumContent: req.body.SumContent,
+            Content: req.body.Content, // Ensure this field is properly received
+            source: req.body.source,
+            linksource: req.body.linksource,
+            view: req.body.view,
+            StatusPost: 'Chờ duyệt',
+            Reason: req.body.Reason || null,
+            TimePublic: req.body.TimePublic || null,
+            Premium: req.body.Premium || 0,
+        };
+        console.log(req.body.Content);
+        console.log("memaybeo");
+        console.log("Updated post data:", updatedPost); // Debugging line
 
-    // // Handle tags (if any are selected)
-    // if (req.body.Tags && req.body.Tags.length > 0) {
-    //     await postService.updateTagsForPost(updatedPost.PostID, req.body.Tags); // Assuming you have a method to update tags for a post
-    // }
+        await postService.updatePost(updatedPost);
 
-    res.redirect('/writer');
+        res.redirect('/writer');
+    } catch (error) {
+        console.error("Error updating post:", error);
+        res.status(500).send("An error occurred while updating the post.");
+    }
 });
-
 
 // Route to display the form for editing a post
 router.get('/edit/:PostID', auth, async (req, res) => {
@@ -159,7 +164,7 @@ router.get('/edit/:PostID', auth, async (req, res) => {
     const subcategories = await postService.findAllSubcategories();
     const tags = await postService.findAllTags();
 
-    console.log(post.Content);
+ 
 
     if (!post) {
         return res.status(404).send('Post not found');
