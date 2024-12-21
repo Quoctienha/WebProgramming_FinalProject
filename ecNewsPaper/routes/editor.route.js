@@ -25,7 +25,7 @@ router.get("/drafts", auth, async (req, res) => {
     const drafts2=await editorService.getAcceptedPostsByEditor(editorId);
     const drafts3=await editorService.getExportedPostsByEditor(editorId);
     const drafts4=await editorService.getDenyPostsByEditor(editorId);
-   
+   console.log(drafts);
  
     res.render("vwEditor/drafts", {   drafts,
       drafts2,

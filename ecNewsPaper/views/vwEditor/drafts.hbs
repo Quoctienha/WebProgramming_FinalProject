@@ -26,6 +26,8 @@
           <th style="border: 1px solid #ddd; padding: 8px;">Chuyên mục</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Tác giả</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Hành động</th>
+          <th style="border: 1px solid #ddd; padding: 8px;">Chi tiết</th>
+
         </tr>
       </thead>
       <tbody>
@@ -47,6 +49,14 @@
               </button>
 
             </td>
+            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+              <button 
+                class="btn btn-info btn-sm" 
+                data-content="{{this.Content}}" 
+                onclick="viewContent(this)">
+                Xem nội dung
+              </button>
+            </td>
           </tr>
         {{/each}}
       </tbody>
@@ -66,6 +76,8 @@
           <th style="border: 1px solid #ddd; padding: 8px;">Tiêu đề</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Chuyên mục</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Tác giả</th>
+          <th style="border: 1px solid #ddd; padding: 8px;">Chi tiết</th>
+
         </tr>
       </thead>
       <tbody>
@@ -74,6 +86,14 @@
             <td style="border: 1px solid #ddd; padding: 8px;">{{this.PostTitle}}</td>
             <td style="border: 1px solid #ddd;text-align: center; padding: 8px;">{{this.CName}}</td>
             <td style="border: 1px solid #ddd; text-align: center;padding: 8px;">{{this.UserName}}</td>
+            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+              <button 
+                class="btn btn-info btn-sm" 
+                data-content="{{this.Content}}" 
+                onclick="viewContent(this)">
+                Xem nội dung
+              </button>
+            </td>
           </tr>
         {{/each}}
       </tbody>
@@ -93,6 +113,8 @@
           <th style="border: 1px solid #ddd; padding: 8px;">Tiêu đề</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Chuyên mục</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Tác giả</th>
+          <th style="border: 1px solid #ddd; padding: 8px;">Chi tiết</th>
+
         </tr>
       </thead>
       <tbody>
@@ -101,6 +123,14 @@
             <td style="border: 1px solid #ddd; padding: 8px;">{{this.PostTitle}}</td>
             <td style="border: 1px solid #ddd;text-align: center; padding: 8px;">{{this.CName}}</td>
             <td style="border: 1px solid #ddd; text-align: center;padding: 8px;">{{this.UserName}}</td>
+            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+              <button 
+                class="btn btn-info btn-sm" 
+                data-content="{{this.Content}}" 
+                onclick="viewContent(this)">
+                Xem nội dung
+              </button>
+            </td>
           </tr>
         {{/each}}
       </tbody>
@@ -120,7 +150,8 @@
           <th style="border: 1px solid #ddd; padding: 8px;">Chuyên mục</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Tác giả</th>
           <th style="border: 1px solid #ddd; padding: 8px;">Hành động</th>
-         
+          <th style="border: 1px solid #ddd; padding: 8px;">Chi tiết</th>
+
         </tr>
       </thead>
       <tbody>
@@ -136,6 +167,14 @@
                 Duyệt
               </button>
             </td>
+            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+              <button 
+                class="btn btn-info btn-sm" 
+                data-content="{{this.Content}}" 
+                onclick="viewContent(this)">
+                Xem nội dung
+              </button>
+            </td>
           </tr>
         {{/each}}
       </tbody>
@@ -143,6 +182,11 @@
   {{else}}
     <p>Không có bài viết nào bị từ chối.</p>
   {{/if}}
+</div>
+<div id="selectedPostContent" style="margin-top: 20px; border: 1px solid #ddd; padding: 10px; display: none;">
+  <button onclick="hideContent()" class="btn btn-secondary btn-sm" style="float: right;">Ẩn</button>
+  <h3>Nội dung bài viết</h3>
+  <p id="postContent">Chưa có nội dung được chọn.</p>
 </div>
 
 <script>
@@ -230,6 +274,52 @@
     alert("Đã xảy ra lỗi khi từ chối bài viết.");
   }
   }
+  function toggleSection(sectionId, buttonId) {
+    // Hide all sections
+    const sections = document.querySelectorAll(".drafts-table");
+    sections.forEach(section => section.style.display = "none");
+
+    // Show the selected section
+    document.getElementById(sectionId).style.display = "block";
+
+    // Remove active state from all buttons
+    const buttons = document.querySelectorAll(".btn-group .btn");
+    buttons.forEach(button => {
+      button.classList.remove("btn-primary", "active");
+      button.classList.add("btn-secondary");
+    });
+
+    // Add active state to the clicked button
+    const activeButton = document.getElementById(buttonId);
+    activeButton.classList.add("btn-primary", "active");
+    activeButton.classList.remove("btn-secondary");
+
+    // Hide the content section
+    hideContent();
+  }
+   function viewContent(button) {
+    const content = button.getAttribute("data-content"); // Retrieve the content from the data attribute
+
+    const contentSection = document.getElementById("selectedPostContent");
+    const contentDiv = document.getElementById("postContent");
+
+    if (content) {
+      // Decode and display the web-formatted content
+      contentDiv.innerHTML = content; // Use innerHTML to render HTML or rich text
+      contentSection.style.display = "block"; // Make the content section visible
+    } else {
+      contentDiv.textContent = "Không có nội dung.";
+      contentSection.style.display = "none";
+    }
+  }
+  function hideContent() {
+  const contentSection = document.getElementById("selectedPostContent");
+  const contentDiv = document.getElementById("postContent");
+
+  contentDiv.innerHTML = ""; // Clear content
+  contentSection.style.display = "none"; // Hide the section
+}
+
 </script>
 
 <style>

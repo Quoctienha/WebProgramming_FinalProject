@@ -19,6 +19,7 @@ export const getDraftPostsByEditor = async (editorId) => {
         "p.UID",
         "c.CName",
         "p.PostID",
+        "p.Content",
         "p.StatusPost",
         "u.UserName",
         "c.EID" // If you need to get the editor ID from categories, this is fine
@@ -41,6 +42,7 @@ export const getAcceptedPostsByEditor = async (editorId) => {
         "p.UID",
         "c.CName",
         "p.PostID",
+        "p.Content",
         "u.UserName",
         "c.EID" // If you need to get the editor ID from categories, this is fine
       );
@@ -61,6 +63,7 @@ export const getDenyPostsByEditor = async (editorId) => {
         "p.UID",
         "c.CName",
         "p.PostID",
+        "p.Content",
         "u.UserName",
         "c.EID" // If you need to get the editor ID from categories, this is fine
       );
@@ -81,6 +84,7 @@ export const getExportedPostsByEditor = async (editorId) => {
         "p.UID",
         "c.CName",
         "p.PostID",
+        "p.Content",  
         "u.UserName",
         "c.EID" // If you need to get the editor ID from categories, this is fine
       );
