@@ -4,6 +4,12 @@ import moment from 'moment';
 import auth from '../middlewares/auth.mdw.js';
 import multer  from 'multer'
 import db from "../utils/db.js"
+import fs  from 'fs'
+import path  from 'path'
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const router = express.Router();
 router.use(express.json());
@@ -32,54 +38,20 @@ router.get('/add',  async (req, res) => {
 });
 
 
-// Thêm upload ảnh 
-router.get('/upload', function(req,res){
-    res.render('vwWriter/addPost');
-})
-//const upload = multer({ dest: 'uploads/' })
-router.post('/upload', function(req, res){
-   // console.log(req.body);
-
-   const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './static/imgs/posts')
-    },
-        filename: function (req, file, cb) {
-        cb(null, file.originalname);
-        }
-    });
-
-   
-    const upload = multer({storage});
-    upload.array('avatar, 5') (req, res, function(err){
-        console.log(req.body);
-        if(err){
-            console.error(err);
-        } else {
-            res.render('vwWriter/addPost');
-        }
-    });
-    
-
-});
-
 
 router.use(express.urlencoded({ extended: true }));
 
-
-
-// Handle adding a new post
-router.post('/add',  async (req, res) => {
+router.post('/add', auth, async (req, res) => {
     const newPost = {
         PostTitle: req.body.PostTitle,
         CID: req.body.CID,
         SCID: req.body.SCID || null,
-        UID: req.session.authUser.UserID, // Retrieve UID from session
+        UID: req.session.authUser.UserID,
         TimePost: new Date(),
         SumContent: req.body.SumContent,
         Content: req.body.Content,
-        source: "",
-        linksource: "",
+        source: req.body.source,
+        linksource: req.body.linksource,
         view: 0,
         StatusPost: 'Chờ duyệt',
         Reason: req.body.Reason || null,
@@ -87,20 +59,89 @@ router.post('/add',  async (req, res) => {
         Premium: req.body.Premium || 0,
     };
 
-
-  
     try {
-        // Execute the SQL query to insert the post
-        await postService.addPost(newPost);
+        // Lưu bài viết và lấy `postID`
+        const postID = await postService.addPost(newPost);
 
-        // Redirect to the writer page after successful insertion
-        res.redirect('/writer');
+        // Chuyển hướng tới form upload, truyền `postID` qua query parameter
+        res.redirect(`/writer/uploadphoto?postID=${postID}`);
     } catch (error) {
         console.error('Error inserting post:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Error saving post to database');
     }
 });
 
+router.get('/uploadphoto', auth, (req, res) => {
+    const postID = req.query.postID;
+
+    if (!postID) {
+        return res.status(400).send('Post ID is required');
+    }
+
+    res.render('vwWriter/uploadphoto', { postID });
+});
+
+// Cấu hình multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const postID = req.body.postID; // Lấy `postID` từ form
+        if (!postID) {
+            return cb(new Error('Post ID not available'), null);
+        }
+
+        const postDir = path.join(__dirname, '../static/imgs/posts', `${postID}`);
+
+        // Tạo thư mục nếu chưa tồn tại
+        if (!fs.existsSync(postDir)) {
+            fs.mkdirSync(postDir, { recursive: true });
+        }
+        cb(null, postDir);
+    },
+    filename: function (req, file, cb) {
+        const postID = req.body.postID; // Lấy `postID` từ form
+        const postDir = path.join(__dirname, '../static/imgs/posts', `${postID}`);
+
+        // Đếm số lượng các file hiện tại trong thư mục
+        fs.readdir(postDir, (err, files) => {
+            if (err) {
+                return cb(err);
+            }
+
+            // Lọc các file ảnh và lấy số thứ tự tiếp theo
+            const imageFiles = files.filter(file => file.endsWith(path.extname(file)));
+            const fileNumber = imageFiles.length + 1; // Số thứ tự của file mới
+
+            // Tạo tên file theo định dạng: PostID_sothutu.jpg
+            const fileExtension = path.extname(file.originalname); // Lấy phần mở rộng của file
+            const fileName = `${postID}_${fileNumber}${fileExtension}`;
+
+            cb(null, fileName);
+        });
+    },
+});
+
+const upload = multer({ storage });
+
+// Route POST xử lý upload ảnh
+router.post('/uploadphoto', auth, upload.single('fuMain'), (req, res) => {
+    try {
+        console.log('Uploaded files:', req.files);
+        const postID = req.body.postID;
+// Tạo message thông báo thành công
+        const message = `Upload thành công! Ảnh đã được lưu cho bài viết với Post ID: ${postID}`;
+
+        // Truyền message và postID lại vào view
+        res.redirect('/writer');
+    } catch (error) {
+        console.error('Error uploading files:', error);
+
+        // Tạo message thông báo lỗi
+        const message = 'Có lỗi xảy ra khi upload ảnh. Vui lòng thử lại.';
+
+        // Truyền message và postID lại vào view
+        res.render('vwWriter/uploadphoto');
+    }
+});
 
 
 
