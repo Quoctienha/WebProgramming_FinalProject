@@ -1,5 +1,6 @@
 import db from "../utils/db.js";
 import express from "express";
+
 const router = express.router;
 /**
  * Lấy danh sách bài viết draft do biên tập viên quản lý.
@@ -93,14 +94,16 @@ export const getExportedPostsByEditor = async (editorId) => {
     throw error;
   }
 };
-export const approvePost = async(PostID) =>{
+export const approvePost = async(PostID,TimePublic,Premium) =>{
 
     try
     { 
       await db("posts as p")
       .where("p.PostID", PostID) // Use the PostID to locate the row
       .update({
-        "p.StatusPost": "Chờ xuất bản", // Update the StatusPost column with the new value
+        "p.StatusPost": "Chờ xuất bản",
+        "p.TimePublic":TimePublic,
+        "p.Premium":Premium // Update the StatusPost column with the new value
   });
     }catch (error) {
     console.error("Error fetching draft posts:", error);
@@ -109,14 +112,15 @@ export const approvePost = async(PostID) =>{
 
 
 }
-export const rejectPost = async(PostID) =>{
+export const rejectPost = async(PostID,reason) =>{
 
   try
   { 
     await db("posts as p")
     .where("p.PostID", PostID) // Use the PostID to locate the row
     .update({
-      "p.StatusPost": "Từ chối", // Update the StatusPost column with the new value
+      "p.StatusPost": "Từ chối",
+      "p.Reason":reason // Update the StatusPost column with the new value
 });
   }catch (error) {
   console.error("Error fetching draft posts:", error);

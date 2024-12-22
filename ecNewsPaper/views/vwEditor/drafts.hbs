@@ -1,3 +1,221 @@
+{{#section 'css'}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+<style>
+  /* Make sure all buttons are the same size and centered */
+.btn-group {
+  display: flex;
+  justify-content: center;  /* Center buttons horizontally */
+  width: 100%;
+}
+
+.btn-group .btn {
+  flex: 1;                  /* Make all buttons take equal space */
+  text-align: center;       /* Center text inside each button */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Active button style */
+.btn-group .btn.active {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  color: white;
+}
+
+/* Optional: Styling for inactive buttons */
+.btn-group .btn:not(.active) {
+  background-color: #6c757d;
+  color: white;
+}
+
+</style>
+
+{{/section}}
+{{#section 'js'}}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+  <script>
+     // Cài đặt datetimepicker
+  $('#txtDOB').datetimepicker({
+    timepicker: false,
+    format: 'd/m/Y H:i:s',
+    mask: true
+  });
+  </script>
+<script>
+  
+  // Event listeners for the buttons
+  document.getElementById("showDrafts").addEventListener("click", () => toggleSection("draftsSection", "showDrafts"));
+  document.getElementById("showDrafts2").addEventListener("click", () => toggleSection("drafts2Section", "showDrafts2"));
+  document.getElementById("showDrafts3").addEventListener("click", () => toggleSection("drafts3Section", "showDrafts3"));
+  document.getElementById("showDrafts4").addEventListener("click", () => toggleSection("drafts4Section", "showDrafts4"));
+
+
+  /**
+   * Toggles visibility of a section and updates the active button.
+   * @param {string} sectionId - The ID of the section to show.
+   * @param {string} buttonId - The ID of the button to highlight.
+   */
+  function toggleSection(sectionId, buttonId) {
+    // Hide all sections
+    const sections = document.querySelectorAll(".drafts-table");
+    sections.forEach(section => section.style.display = "none");
+
+    // Show the selected section
+    document.getElementById(sectionId).style.display = "block";
+
+    // Remove active state from all buttons
+    const buttons = document.querySelectorAll(".btn-group .btn");
+    buttons.forEach(button => {
+      button.classList.remove("btn-primary", "active");
+      button.classList.add("btn-secondary");
+    });
+
+    // Add active state to the clicked button
+    const activeButton = document.getElementById(buttonId);
+    activeButton.classList.add("btn-primary", "active");
+    activeButton.classList.remove("btn-secondary");
+  }
+  function approvePost(PostId) {
+  currentPostId = PostId; // Store the current Post ID
+  document.getElementById("approvalSection").style.display = "block"; // Show the approval section
+}
+
+// Confirm approval with selected options
+let currentPostId; // Variable to store the current post ID
+
+function approvePost(PostId) {
+  currentPostId = PostId; // Store the current Post ID
+  document.getElementById("approvalSection").style.display = "block"; // Show the approval section
+}
+
+// Confirm approval with selected options
+document.getElementById("confirmApprove").addEventListener("click", async () => {
+  const isPremium = document.getElementById("premiumSelect").checked ? 1 : 0; // Set to 1 if checked, otherwise 0
+  const timePublic = document.getElementById("txtDOB").value; // Get the selected time
+  if (!timePublic) {
+    alert("Vui lòng chọn thời gian xuất bản.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/editor/approve", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        PostID: currentPostId, // Use the stored Post ID
+        Premium: isPremium, // Include the premium status (1 or 0)
+        TimePublic: timePublic, // Include the time public
+      }),
+    });
+
+    if (response.ok) {
+      alert("Bài viết đã được duyệt.");
+      location.reload(); // Refresh the page
+    } else {
+      const message = await response.text();
+      alert("Lỗi: " + message);
+    }
+  } catch (error) {
+    console.error("Error approving post:", error);
+    alert("Đã xảy ra lỗi khi duyệt bài viết.");
+  } finally {
+    document.getElementById("approvalSection").style.display = "none"; // Hide the approval section after processing
+    document.getElementById("premiumSelect").checked = false; // Clear the checkbox
+    document.getElementById("timePublicSelect").value = ""; // Clear the date picker
+  }
+});
+ // Variable to store the current post ID
+
+function rejectPost(PostId) {
+  currentPostId = PostId; // Store the current Post ID
+  document.getElementById("rejectionReasonSection").style.display = "block"; // Show the rejection reason input
+}
+
+// Confirm rejection with reason
+document.getElementById("confirmReject").addEventListener("click", async () => {
+  const reason = document.getElementById("rejectionReason").value; // Get the reason from the input
+  alert(reason);
+  if (!reason) {
+    alert("Vui lòng nhập lý do từ chối.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/editor/reject", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        PostID: currentPostId, // Use the stored Post ID
+        reason: reason, // Include the reason
+      }),
+    });
+
+    if (response.ok) {
+      alert("Bài viết đã bị từ chối.",reason);
+      location.reload(); // Refresh the page
+    } else {
+      const message = await response.text();
+      alert("Lỗi: " + message);
+    }
+  } catch (error) {
+    console.error("Error denying post:", error);
+    alert("Đã xảy ra lỗi khi từ chối bài viết.");
+  } finally {
+    document.getElementById("rejectionReasonSection").style.display = "none"; // Hide the input section after processing
+    document.getElementById("rejectionReason").value = ""; // Clear the input
+  }
+});
+  function toggleSection(sectionId, buttonId) {
+    // Hide all sections
+    const sections = document.querySelectorAll(".drafts-table");
+    sections.forEach(section => section.style.display = "none");
+
+    // Show the selected section
+    document.getElementById(sectionId).style.display = "block";
+
+    // Remove active state from all buttons
+    const buttons = document.querySelectorAll(".btn-group .btn");
+    buttons.forEach(button => {
+      button.classList.remove("btn-primary", "active");
+      button.classList.add("btn-secondary");
+    });
+
+    // Add active state to the clicked button
+    const activeButton = document.getElementById(buttonId);
+    activeButton.classList.add("btn-primary", "active");
+    activeButton.classList.remove("btn-secondary");
+
+    // Hide the content section
+    hideContent();
+  }
+   function viewContent(button) {
+    const content = button.getAttribute("data-content"); // Retrieve the content from the data attribute
+
+    const contentSection = document.getElementById("selectedPostContent");
+    const contentDiv = document.getElementById("postContent");
+
+    if (content) {
+      // Decode and display the web-formatted content
+      contentDiv.innerHTML = content; // Use innerHTML to render HTML or rich text
+      contentSection.style.display = "block"; // Make the content section visible
+    } else {
+      contentDiv.textContent = "Không có nội dung.";
+      contentSection.style.display = "none";
+    }
+  }
+  function hideContent() {
+  const contentSection = document.getElementById("selectedPostContent");
+  const contentDiv = document.getElementById("postContent");
+
+  contentDiv.innerHTML = ""; // Clear content
+  contentSection.style.display = "none"; // Hide the section
+}
+
+</script>
+{{/section}}
 <h2 style=" text-align: center">Danh sách bài viết </h2>
 
 <!-- Buttons to toggle between drafts -->
@@ -188,165 +406,26 @@
   <h3>Nội dung bài viết</h3>
   <p id="postContent">Chưa có nội dung được chọn.</p>
 </div>
-
-<script>
-  // Event listeners for the buttons
-  document.getElementById("showDrafts").addEventListener("click", () => toggleSection("draftsSection", "showDrafts"));
-  document.getElementById("showDrafts2").addEventListener("click", () => toggleSection("drafts2Section", "showDrafts2"));
-  document.getElementById("showDrafts3").addEventListener("click", () => toggleSection("drafts3Section", "showDrafts3"));
-  document.getElementById("showDrafts4").addEventListener("click", () => toggleSection("drafts4Section", "showDrafts4"));
-
-
-  /**
-   * Toggles visibility of a section and updates the active button.
-   * @param {string} sectionId - The ID of the section to show.
-   * @param {string} buttonId - The ID of the button to highlight.
-   */
-  function toggleSection(sectionId, buttonId) {
-    // Hide all sections
-    const sections = document.querySelectorAll(".drafts-table");
-    sections.forEach(section => section.style.display = "none");
-
-    // Show the selected section
-    document.getElementById(sectionId).style.display = "block";
-
-    // Remove active state from all buttons
-    const buttons = document.querySelectorAll(".btn-group .btn");
-    buttons.forEach(button => {
-      button.classList.remove("btn-primary", "active");
-      button.classList.add("btn-secondary");
-    });
-
-    // Add active state to the clicked button
-    const activeButton = document.getElementById(buttonId);
-    activeButton.classList.add("btn-primary", "active");
-    activeButton.classList.remove("btn-secondary");
-  }
-  async function approvePost(PostId) {
-  alert("PostID sent: " + PostId);
-  try {
-    const response = await fetch("/editor/approve", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        PostID: PostId, // Ensure the key matches what the backend expects
-      }),
-    });
-
-    if (response.ok) {
-      alert("Bài viết đã được duyệt.");
-      location.reload(); // Refresh the page
-    } else {
-      const message = await response.text();
-      alert("Lỗi: " + message);
-    }
-  } catch (error) {
-    console.error("Error approving post:", error);
-    alert("Đã xảy ra lỗi khi duyệt bài viết.");
-  }
-}
+<!-- Rejection Reason Input -->
+<div id="rejectionReasonSection" style="display: none; margin-top: 20px;">
+  <label for="rejectionReason">Lý do từ chối:</label>
+  <input type="text" name="rejectReason" id="rejectionReason" class="form-control" placeholder="Nhập lý do từ chối">
+  <button id="confirmReject" class="btn btn-danger mt-2">Xác nhận từ chối</button>
+</div>
+<!-- Premium and TimePublic Selection -->
+<!-- Premium and TimePublic Selection -->
+<!-- Premium and TimePublic Selection -->
+<div id="approvalSection" style="display: none; margin-top: 20px;">
+  <label for="premiumSelect">Chọn loại:</label>
+  <div>
+    <input type="checkbox" id="premiumSelect">
+    <label for="premiumSelect">Premium</label>
+  </div>
 
 
-  async function rejectPost(PostId) {
-  alert("PostID sent: " + PostId);
-  try {
-    const response = await fetch("/editor/reject", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        PostID: PostId, // Ensure the key matches what the backend expects
-      }),
-    });
-
-    if (response.ok) {
-      alert("Bài viết đã bị từ chối.");
-      location.reload(); // Refresh the page
-    } else {
-      const message = await response.text();
-      alert("Lỗi: " + message);
-    }
-  } catch (error) {
-    console.error("Error deny post:", error);
-    alert("Đã xảy ra lỗi khi từ chối bài viết.");
-  }
-  }
-  function toggleSection(sectionId, buttonId) {
-    // Hide all sections
-    const sections = document.querySelectorAll(".drafts-table");
-    sections.forEach(section => section.style.display = "none");
-
-    // Show the selected section
-    document.getElementById(sectionId).style.display = "block";
-
-    // Remove active state from all buttons
-    const buttons = document.querySelectorAll(".btn-group .btn");
-    buttons.forEach(button => {
-      button.classList.remove("btn-primary", "active");
-      button.classList.add("btn-secondary");
-    });
-
-    // Add active state to the clicked button
-    const activeButton = document.getElementById(buttonId);
-    activeButton.classList.add("btn-primary", "active");
-    activeButton.classList.remove("btn-secondary");
-
-    // Hide the content section
-    hideContent();
-  }
-   function viewContent(button) {
-    const content = button.getAttribute("data-content"); // Retrieve the content from the data attribute
-
-    const contentSection = document.getElementById("selectedPostContent");
-    const contentDiv = document.getElementById("postContent");
-
-    if (content) {
-      // Decode and display the web-formatted content
-      contentDiv.innerHTML = content; // Use innerHTML to render HTML or rich text
-      contentSection.style.display = "block"; // Make the content section visible
-    } else {
-      contentDiv.textContent = "Không có nội dung.";
-      contentSection.style.display = "none";
-    }
-  }
-  function hideContent() {
-  const contentSection = document.getElementById("selectedPostContent");
-  const contentDiv = document.getElementById("postContent");
-
-  contentDiv.innerHTML = ""; // Clear content
-  contentSection.style.display = "none"; // Hide the section
-}
-
-</script>
-
-<style>
-  /* Make sure all buttons are the same size and centered */
-.btn-group {
-  display: flex;
-  justify-content: center;  /* Center buttons horizontally */
-  width: 100%;
-}
-
-.btn-group .btn {
-  flex: 1;                  /* Make all buttons take equal space */
-  text-align: center;       /* Center text inside each button */
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Active button style */
-.btn-group .btn.active {
-  background-color: #0056b3;
-  border-color: #0056b3;
-  color: white;
-}
-
-/* Optional: Styling for inactive buttons */
-.btn-group .btn:not(.active) {
-  background-color: #6c757d;
-  color: white;
-}
-
-</style>
+     <div class="form-group">
+        <label for="txtDOB">Ngày sinh</label>
+        <input type="text" class="form-control" id="txtDOB" name="raw_dob" required />
+      </div>
+  <button id="confirmApprove" class="btn btn-success mt-2">Xác nhận duyệt</button>
+</div>

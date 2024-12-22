@@ -2,7 +2,7 @@ import express from "express";
 import * as editorService from "../services/editor.service.js"; // Import tất cả các hàm từ service
 import { ensureEditor } from "../middlewares/auth.mdw.js";
 import session from "express-session";
-
+import moment from "moment";
 const router = express.Router();
 
 router.use(express.json()); // Middleware to parse JSON
@@ -43,14 +43,16 @@ router.get("/drafts", async (req, res) => {
  */
 router.post("/approve", async (req, res) => {
   try {
-    const { PostID } = req.body; // Correctly extract PostID from req.body
+    const { PostID ,TimePublic,Premium} = req.body; // Correctly extract PostID from req.body
     console.log("PostID received:", PostID); // Log the received PostID
-
+    console.log(TimePublic,Premium);
+    const TimePublic2=moment(TimePublic, 'DD/MM/YYYY HH/mm/ss').format('YYYY-MM-DD HH/mm/ss');
+    console.log(TimePublic2);
     if (!PostID) {
       return res.status(400).send("Thiếu thông tin để duyệt bài viết."); // Missing PostID
     }
 
-    await editorService.approvePost(PostID);
+    await editorService.approvePost(PostID,TimePublic2,Premium);
     res.json({ message: "Bài viết đã được duyệt." });
   } catch (error) {
     console.error("Error approving post:", error);
@@ -66,14 +68,14 @@ router.post("/approve", async (req, res) => {
  */
 router.post("/reject", async (req, res) => {
   try {
-    const { PostID } = req.body; // Correctly extract PostID from req.body
+    const { PostID ,reason } = req.body; // Correctly extract PostID from req.body
     console.log("PostID received:", PostID); // Log the received PostID
-
+    console.log(reason);
     if (!PostID) {
       return res.status(400).send("Thiếu thông tin để duyệt bài viết."); // Missing PostID
     }
 
-    await editorService.rejectPost(PostID);
+    await editorService.rejectPost(PostID,reason);
     res.json({ message: "Bài viết đã được từ chối" });
   } catch (error) {
     console.error("Error approving post:", error);
