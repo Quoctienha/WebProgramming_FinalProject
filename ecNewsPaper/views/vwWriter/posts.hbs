@@ -1,0 +1,65 @@
+<div class="container mt-4">
+    <h2>Quản lý bài viết (Posts)</h2>
+    <hr>
+
+    <!-- Button to add a new post -->
+    <a href="/writer/add" class="btn btn-success mb-4">
+        Thêm bài viết
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
+    <hr>
+
+    <h5>Danh sách bài viết</h5>
+    <!-- Display the list of posts -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tiêu đề</th>
+                <th>Danh mục</th>
+                <th>Chuyên mục phụ</th>
+                <th>Ngày đăng</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each posts}}
+            <tr>
+                <td>{{this.PostID}}</td>
+                <td>{{this.PostTitle}}</td>
+                <td>{{this.CName}}</td>
+                <td>{{this.SCName}}</td>
+                <td>{{this.TimePost}}</td>
+                <td>{{this.StatusPost}}</td>
+                <td>
+                    <!-- Link to edit post -->
+                    
+                     {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
+                         <a href="/writer/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
+                        Sửa
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                    {{/if}}
+                     {{#if (Stringcompare this.StatusPost "Từ chối")}}
+                         <a href="/writer/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
+                        Sửa
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                    {{/if}}
+                    <!-- Form to delete post -->
+                    <form method="POST" action="/writer/delete" class="d-inline"
+                        onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
+                        <input type="hidden" name="PostID" value="{{this.PostID}}">
+                        <button type="submit" class="btn btn-danger">
+                            Xóa
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

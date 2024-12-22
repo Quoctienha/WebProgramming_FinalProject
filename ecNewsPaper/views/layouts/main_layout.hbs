@@ -46,7 +46,14 @@
             </b>
           </button>
         </form>
-
+        {{#if authUser.Permission}}
+        {{#if (Equal authUser.Permission 2)}}
+           <a href="/editor/drafts" class="btn btn-primary">Go to Draft</a>
+        {{/if}}
+        {{#if (Equal authUser.Permission 1)}}
+            <a href="/writer" class="btn btn-primary">Write a post</a>
+        {{/if}}
+        {{/if}}
         <!-- (small screens) -->
         <div class="d-block d-lg-none">
            <!-- Admin -->

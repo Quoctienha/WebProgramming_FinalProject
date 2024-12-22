@@ -18,9 +18,16 @@ import adminTagRouter from './routes/admin-tag.route.js';
 import adminSubCatRouter from './routes/admin-subcategories.route.js';
 import adminReaderRouter from './routes/admin-reader.route.js';
 import adminWriterRouter from './routes/admin-writer.route.js'
-import adminEditorRouter from './routes/admin-editor.route.js'
+import adminEditorRouter from './routes/admin-editor.route.js';
+import writerRouter from "./routes/writer.route.js";
+import editorRouter from "./routes/editor.route.js";
 //auth
 import { authAdmin } from './middlewares/auth.mdw.js';
+import { startPublishingService } from "./middlewares/postTCheck.mdw.js";
+import { ensureEditor } from './middlewares/auth.mdw.js';
+import { ensureWriter } from './middlewares/auth.mdw.js';
+
+
 
 //Xác định thư mục hiện tại của tệp
 //import { dirname, format } from 'path';
@@ -40,6 +47,9 @@ app.engine('hbs', engine({
 
     Equal(a, b){
       return Number(a) === Number(b);
+    },
+    Stringcompare(a,b){
+      return String(a)=== String(b);
     },
 
     Increment(value){
@@ -99,7 +109,8 @@ app.use( async function(req,res,next){
 
   next();
 });
-
+//Check duyệt bài viết theo thời gian thật
+startPublishingService();
 //route
 app.get('/', async function(req, res) {
   //top 3 posts of last week
@@ -234,7 +245,8 @@ app.use('/admin/tags',authAdmin, adminTagRouter);
 app.use('/admin/reader',authAdmin, adminReaderRouter);
 app.use('/admin/writer',authAdmin, adminWriterRouter);
 app.use('/admin/editor',authAdmin, adminEditorRouter);
-
+app.use("/writer",ensureWriter, writerRouter);
+app.use("/editor",ensureEditor, editorRouter);
 
 app.use('/403',function (req, res, next) {
   res.render('403', { layout: false });

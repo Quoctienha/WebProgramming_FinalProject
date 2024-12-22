@@ -90,6 +90,14 @@ export default{
         .orderBy('Premium', 'desc')
         .orderBy('TimePublic', 'desc').limit(limit).offset(offset);
     },
+    findPostById(postID) {
+        return db('posts')
+            .leftJoin('categories', 'posts.CID', '=', 'categories.CID')
+            .leftJoin('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
+            .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
+            .where('posts.PostID', postID)
+            .first();  // Ensures it returns only one post (first match)
+    },
 
     searchPosts(keyword, limit, offset) {
         return db('posts')
@@ -120,6 +128,86 @@ export default{
     //update
     IncreaseView(PostID) {
         return db('posts').where('PostID', PostID).increment('view', 1);
-    }   
+    } ,
+    
+    // Add a new post using Knex
+    addPost(newPost) {
+        return db('posts').insert(newPost);
+    },
+    deletePost(PostID) {
+        return db('posts').where('PostID', PostID).del();
+    },
+
+
+    // Update an existing post using Knex
+    updatePost(updatedPost) {
+        return db('posts')
+            .where('PostID', updatedPost.PostID)
+            .update({
+                PostTitle: updatedPost.PostTitle,
+                CID: updatedPost.CID,
+                SCID: updatedPost.SCID,
+                UID: updatedPost.UID,
+                TimePost: updatedPost.TimePost,
+                SumContent: updatedPost.SumContent,
+                Content: updatedPost.Content,
+                source: updatedPost.source,
+                linksource: updatedPost.linksource,
+                view: updatedPost.view,
+
+                StatusPost: updatedPost.StatusPost,
+                Reason: updatedPost.Reason,
+                TimePublic: updatedPost.TimePublic,
+                Premium: updatedPost.Premium,
+
+            });
+    },
+
+    // Delete a post by its ID using Knex
+    deletePost(postID) {
+        return db('posts').where('PostID', postID).del();
+    },
+
+    // Find all posts (optional method for admin view or other use) using Knex
+    findAllPosts() {
+        return db('posts')
+            .leftJoin('categories', 'posts.CID', '=', 'categories.CID')
+            .leftJoin('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
+            .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
+            .orderBy('posts.TimePost', 'desc');
+    },
+
+    // Find posts by User UID using Knex
+    findPostsByUserID(UID) {
+        return db('posts')
+            .where('posts.UID', UID)
+            .leftJoin('categories', 'posts.CID', '=', 'categories.CID')
+            .leftJoin('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
+            .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
+            .orderBy('posts.TimePost', 'desc');
+
+        },
+
+    // Find all categories for the add post form
+    findAllCategories() {
+        return db('categories').select('*');
+    },
+
+    // Find all subcategories for the add post form
+    findAllSubcategories() {
+        return db('subcategories').select('*');
+    },
+    async addTagsToPost(PostID, Tags) {
+        // Assuming you have a `post_tags` table for the relationship
+        const tagPromises = Tags.map(tagID => {
+            return db('post_tags').insert({ PostID, TagID: tagID });
+        });
+        // Wait for all insert operations to complete
+        await Promise.all(tagPromises);
+    },
+    findAllTags() {
+        return db('tag').select('*');
+    }
+    
     
 }

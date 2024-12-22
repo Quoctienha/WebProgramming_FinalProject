@@ -1,0 +1,126 @@
+{{#section 'css'}}
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+{{/section}}
+
+{{#section 'js'}}
+ <script>
+    // Handle subcategories dropdown
+    const subcategories = [
+        {{#each subcategories}}
+        { CID: "{{this.CID}}", SCID: "{{this.SCID}}", SCName: "{{this.SCName}}" },
+        {{/each}}
+    ];
+
+    document.getElementById('CID').addEventListener('change', function () {
+        const selectedCID = this.value;
+        const subcategorySelect = document.getElementById('SCID');
+        subcategorySelect.innerHTML = '<option value="">Chọn chuyên mục phụ</option>';
+        subcategories.forEach(function (subcategory) {
+            if (subcategory.CID === selectedCID) {
+                const option = document.createElement('option');
+                option.value = subcategory.SCID;
+                option.text = subcategory.SCName;
+                option.selected = (option.value === "{{post.SCID}}"); // Pre-select current subcategory
+                subcategorySelect.appendChild(option);
+            }
+        });
+    });
+
+    // Preload subcategories based on current CID
+    document.getElementById('CID').dispatchEvent(new Event('change'));
+
+    // Initialize CKEditor for the Content field
+    let editorContent, editorSummary;
+
+    // Initialize CKEditor for "Nội dung bài viết" (Content)
+    ClassicEditor.create(document.querySelector('#Content'))
+        .then(editor => {
+            editorContent = editor;
+            // Set initial content value
+            editorContent.setData(`{{{post.Content}}}`); // Load existing content
+        })
+        .catch(error => {
+            console.error("Error initializing Content CKEditor:", error);
+        });
+
+    // Initialize CKEditor for "Tóm tắt nội dung" (Summary)
+    ClassicEditor.create(document.querySelector('#SumContent'))
+        .then(editor => {
+            editorSummary = editor;
+            // Set initial summary value
+            editorSummary.setData(`{{{post.SumContent}}}`); // Load existing summary
+        })
+        .catch(error => {
+            console.error("Error initializing Summary CKEditor:", error);
+        });
+
+    // Form Submission Handling
+    const editPostForm = document.querySelector('form');
+    editPostForm.addEventListener('submit', function (event) {
+        // Handle content editor
+        if (editorContent) {
+            const contentData = editorContent.getData();
+            document.getElementById('Content').value = contentData;
+        } else {
+            event.preventDefault();
+            alert('Vui lòng đợi trình soạn thảo nội dung tải xong.');
+        }
+
+        // Handle summary editor
+        if (editorSummary) {
+            const summaryData = editorSummary.getData();
+            document.getElementById('SumContent').value = summaryData;
+        } else {
+            event.preventDefault();
+            alert('Vui lòng đợi trình soạn thảo tóm tắt tải xong.');
+        }
+    });
+
+</script>
+{{/section}}
+
+<div class="container mt-4">
+    <h2>Sửa bài viết</h2>
+    <hr>
+
+    <form method="POST" action="/writer/edit">
+        <input type="hidden" name="PostID" value="{{post.PostID}}">
+
+        <div class="form-group mb-2">
+            <label for="PostTitle">Tiêu đề bài viết</label>
+            <input type="text" name="PostTitle" id="PostTitle" class="form-control" value="{{post.PostTitle}}" required>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="CID">Danh mục</label>
+            <select name="CID" id="CID" class="form-control" required>
+                {{#each categories}}
+                <option value="{{this.CID}}" {{#Equal this.CID post.CID}}selected{{/Equal}}>{{this.CName}}</option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="SCID">Chuyên mục phụ</label>
+            <select name="SCID" id="SCID" class="form-control">
+                <option value="">Chọn chuyên mục phụ</option>
+            </select>
+        </div>
+
+        <!-- Summary Editor -->
+        <div class="form-group mb-2">
+            <label for="SumContent ">Tóm tắt nội dung</label>
+            <textarea name="SumContent" id="SumContent" class="form-control">{{{post.SumContent}}}</textarea>
+        </div>
+
+        <!-- Content Editor -->
+        <div class="form-group mb-2">
+            <label for="Content">Nội dung bài viết</label>
+            <textarea name="Content" id="Content" class="form-control">{{{post.Content}}}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-warning">
+            Cập nhật bài viết
+        </button>
+    </form>
+</div>
