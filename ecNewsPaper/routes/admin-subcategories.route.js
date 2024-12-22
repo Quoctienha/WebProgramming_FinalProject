@@ -1,7 +1,7 @@
 import express from 'express';
 
 import categoryService from "../services/category.service.js";
-import adminService from '../services/admin.service.js';
+
 
 
 const router =express.Router();
@@ -28,7 +28,7 @@ router.post('/add', async function (req, res) {
         SCName: req.body.SCName,
         CID: req.body.cid,
     };
-    await adminService.addSubcategory(newSubCategory);
+    await categoryService.addSubcategory(newSubCategory);
     res.redirect(`/admin/categories/subcategories?id=${cid}`);
 });
 
@@ -37,7 +37,7 @@ router.post('/delete', async function (req, res) {
     const cid = req.body.cid ;
 
     const { SCID } = req.body;
-    await adminService.deleteSubcategory(SCID);
+    await categoryService.deleteSubcategory(SCID);
     res.redirect(`/admin/categories/subcategories?id=${cid}`);
 });
 
@@ -48,7 +48,7 @@ router.post('/edit', async function (req, res) {
         SCID: req.body.SCID,
         SCName: req.body.SCName
     };
-    await adminService.updateSubcategory(updatedSubcategory);
+    await categoryService.updateSubcategory(updatedSubcategory);
     res.redirect(`/admin/categories/subcategories?id=${cid}`);
 });
 

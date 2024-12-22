@@ -31,6 +31,24 @@ export default{
         return db('tag').where('TagID', TagID).first();
     },
 
+    deleteTag(TagID) {
+        return db('tag').where('TagID', TagID).del();
+    },
+
+    findAllTag(limit, offset) {
+        return db('tag').select('*').orderBy('TagID', 'asc').limit(limit)
+        .offset(offset);;
+    },
+
+    addTag(tag) {
+        return db('tag').insert(tag);
+    },
+
+    updateTag(tag) {
+        return db('tag')
+            .where('TagID', tag.TagID)
+            .update('TName', tag.TName);
+    },
 
     
 }

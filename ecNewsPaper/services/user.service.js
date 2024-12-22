@@ -17,6 +17,10 @@ export default{
         return db('users').where('UserID',id).update(entity);
     },
 
+    delete(id){
+        return db('users').where('UserID',id).del();
+    },
+
     // Tìm người dùng theo email
     findByEmail(email) {
         return db('users').where('Email', email).first();
@@ -34,7 +38,6 @@ export default{
         .update('Password_hash', newPasswordHash);
     },
 
-    //độc giả
     //tìm độc giả
     countAllReaders(){
         return db('users').where('Permission', 0).count('* as total').first();
@@ -44,7 +47,6 @@ export default{
         return db('users').where('Permission', 0).orderBy('UserID', 'asc').limit(limit).offset(offset);
     },
 
-    //phóng viên
     //tìm phóng viên
     countAllWriters(){
         return db('users').where('Permission', 1).count('* as total').first();
@@ -54,7 +56,6 @@ export default{
         return db('users').where('Permission', 1).orderBy('UserID', 'asc').limit(limit).offset(offset);
     },
 
-    //biên tập viên
     //tìm biên tập viên
     countAllEditors(){
         return db('users').where('Permission', 2).count('* as total').first();

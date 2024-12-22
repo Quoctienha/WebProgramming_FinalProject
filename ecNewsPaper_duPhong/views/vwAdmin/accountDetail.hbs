@@ -7,12 +7,8 @@
         <img src="http://localhost:3030/static/imgs/profile.jpg" class="img-thumbnail" alt="..." style="width: 15vw;">
     </div>
     <div class="row d-flex justify-content-center m-2">
-        <a href="/account/patch" class="btn btn-primary" role="button" aria-pressed="true">
-            Chỉnh sửa
-            <i class="bi bi-pencil-square"></i>
-        </a>
-        <a href="/" class="btn btn-success ml-2" role="button" aria-pressed="true">
-           <i class="bi bi-house-door-fill"></i>
+        <a href="/admin/{{#if (Equal this.user.Permission 0)}}reader{{/if}}{{#if (Equal this.user.Permission 1)}}writer{{/if}}{{#if (Equal this.user.Permission 2)}}editor{{/if}}" class="btn btn-success ml-2" role="button" aria-pressed="true">
+           <i class="bi bi-box-arrow-in-left"></i>
         </a>
     </div>
     <form>

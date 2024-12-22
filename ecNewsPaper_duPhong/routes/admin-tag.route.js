@@ -1,6 +1,4 @@
 import express from 'express';
-
-import adminService from '../services/admin.service.js';
 import tagService from '../services/tag.service.js';
 
 const router = express.Router();
@@ -25,7 +23,7 @@ router.get('/', async function (req, res) {
             active:i === +current_page
         });
     }
-    const tags = await adminService.findAllTag(limit, offset);
+    const tags = await tagService.findAllTag(limit, offset);
     res.render('vwAdmin/tags', {
         pageNumbers:pageNumbers,
         needPagination: nPages > 1,
@@ -40,14 +38,14 @@ router.post('/add', async function (req, res) {
     const newTag = {
         TName: req.body.TName
     };
-    await adminService.addTag(newTag);
+    await tagService.addTag(newTag);
     res.redirect('/admin/tags');
 });
 
 // Xóa tag
 router.post('/delete', async function (req, res) {
     const { TagID } = req.body;
-    await adminService.deleteTag(TagID);
+    await tagService.deleteTag(TagID);
     res.redirect('/admin/tags');
 });
 
@@ -57,7 +55,7 @@ router.post('/edit', async function (req, res) {
         TagID: req.body.TagID,
         TName: req.body.TName
     };
-    await adminService.updateTag(updatedTag);
+    await tagService.updateTag(updatedTag);
     res.redirect('/admin/tags');
 });
 

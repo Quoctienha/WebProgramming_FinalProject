@@ -4,6 +4,7 @@ import moment from 'moment';
 import nodemailer from 'nodemailer';
 
 //middleware
+import auth from '../middlewares/auth.mdw.js';
 import {authPremium} from '../middlewares/auth.mdw.js';
 
 import userService from '../services/user.service.js';
@@ -32,51 +33,44 @@ router.get('/login', async function (req, res) {
 });
 // Login route
 router.post('/login', async function(req, res) {
-  // Tìm người dùng theo tên đăng nhập
   const user = await userService.findByUsername(req.body.username);
 
   if (!user) {
-    return res.render('vwAccount/login', {
-      layout: 'account_layout',
-      showErrors: true
-    });
+      return res.render('vwAccount/login', {
+          layout: 'account_layout',
+          showErrors: true
+      });
   }
 
-  // Kiểm tra mật khẩu
+  // Check password
   if (!bcrypt.compareSync(req.body.raw_password, user.Password_hash)) {
-    return res.render('vwAccount/login', {
-      layout: 'account_layout',
-      showErrors: true
-    });
+      return res.render('vwAccount/login', {
+          layout: 'account_layout',
+          showErrors: true
+      });
   }
 
-  // Kiểm tra xem tài khoản có hết hạn hay không dựa trên `NgayHHPremium`
+  // Check if the account is expired based on NgayHHPremium
   const expirationDate = moment(user.NgayHHPremium, 'YYYY-MM-DD HH:mm:ss');
   const currentDate = moment();
-  
-  if (user.Permission === 0) {
-    if (currentDate.isAfter(expirationDate)) {
+  if(user.Permission===0){
+  if (currentDate.isAfter(expirationDate)) {
       return res.render('vwAccount/login', {
-        layout: 'account_layout',     
-        message: true
+          layout: 'account_layout',     
+          message:true
       });
-    }
   }
-
-  // Lưu thông tin người dùng vào session
+  }
+  // Set session variables after a successful login
   req.session.auth = true;
   req.session.authUser = user;
   req.session.authUser.DayOfBirth = moment(user.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD');
-  req.session.authUserUID = user.UserID;  // Storing UserID
-
-  if (user.Permission === 1) {
-    req.session.authUserID = user.UserID;
-    return res.redirect('/writer/posts');
-  }
-
-  // Xử lý redirect nếu không phải người dùng có quyền viết
+  req.session.authUser.NgayDKPremium = moment(user.NgayDKPremium , 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss'),
+  req.session.authUser.NgayHHPremium = moment(user.NgayHHPremium, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss')
+  // Clear retUrl if set, and redirect to the home page or wherever the user is supposed to go
   const retUrl = req.session.retUrl || '/';
-  delete req.session.retUrl;
+    delete req.session.retUrl; // Xóa redirectUrl sau khi sử dụng
+  delete req.session.retUrl;  // Clear any stored redirection URL after the user logs in
   res.redirect(retUrl);
 });
 

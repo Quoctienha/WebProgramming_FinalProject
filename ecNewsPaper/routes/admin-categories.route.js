@@ -1,7 +1,7 @@
 import express from 'express';
 
 import categoryService from "../services/category.service.js";
-import adminService from '../services/admin.service.js';
+
 
 
 const router =express.Router();
@@ -42,14 +42,14 @@ router.post('/add', async function (req, res) {
     const newCategory = {
         CName: req.body.CName
     };
-    await adminService.addCategories(newCategory);
+    await categoryService.addCategories(newCategory);
     res.redirect('/admin/categories');
 });
 
 // Xóa danh mục
 router.post('/delete', async function (req, res) {
     const { CID } = req.body;
-    await adminService.deleteCategories(CID);
+    await categoryService.deleteCategories(CID);
     res.redirect('/admin/categories');
 });
 
@@ -59,7 +59,7 @@ router.post('/edit', async function (req, res) {
         CID: req.body.CID,
         CName: req.body.CName
     };
-    await adminService.updateCategories(updatedCategory);
+    await categoryService.updateCategories(updatedCategory);
     res.redirect('/admin/categories');
 });
 

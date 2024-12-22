@@ -65,6 +65,8 @@ router.post('/login', async function(req, res) {
   req.session.auth = true;
   req.session.authUser = user;
   req.session.authUser.DayOfBirth = moment(user.DayOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD');
+  req.session.authUser.NgayDKPremium = moment(user.NgayDKPremium , 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss'),
+  req.session.authUser.NgayHHPremium = moment(user.NgayHHPremium, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss')
   // Clear retUrl if set, and redirect to the home page or wherever the user is supposed to go
   const retUrl = req.session.retUrl || '/';
     delete req.session.retUrl; // Xóa redirectUrl sau khi sử dụng

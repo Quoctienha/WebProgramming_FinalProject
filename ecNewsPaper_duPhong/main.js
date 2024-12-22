@@ -16,7 +16,9 @@ import adminRouter from './routes/admin.route.js';
 import adminCatRouter from './routes/admin-categories.route.js';
 import adminTagRouter from './routes/admin-tag.route.js';
 import adminSubCatRouter from './routes/admin-subcategories.route.js';
-
+import adminReaderRouter from './routes/admin-reader.route.js';
+import adminWriterRouter from './routes/admin-writer.route.js'
+import adminEditorRouter from './routes/admin-editor.route.js'
 //auth
 import { authAdmin } from './middlewares/auth.mdw.js';
 
@@ -229,6 +231,11 @@ app.use('/admin',authAdmin, adminRouter);
 app.use('/admin/categories',authAdmin, adminCatRouter);
 app.use('/admin/categories/subcategories',authAdmin,adminSubCatRouter);
 app.use('/admin/tags',authAdmin, adminTagRouter);
+app.use('/admin/reader',authAdmin, adminReaderRouter);
+app.use('/admin/writer',authAdmin, adminWriterRouter);
+app.use('/admin/editor',authAdmin, adminEditorRouter);
+
+
 app.use('/403',function (req, res, next) {
   res.render('403', { layout: false });
 });

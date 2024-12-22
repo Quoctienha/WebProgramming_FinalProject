@@ -17,6 +17,10 @@ export default{
         return db('users').where('UserID',id).update(entity);
     },
 
+    delete(id){
+        return db('users').where('UserID',id).del();
+    },
+
     // Tìm người dùng theo email
     findByEmail(email) {
         return db('users').where('Email', email).first();

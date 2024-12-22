@@ -36,6 +36,16 @@
         </div>
         <hr>
         <div class="form-group">
+            <label for="txtNgaydk">Ngày đăng ký</label>
+            <input type="text" name="ngaydk" id="txtNgaydk" class="form-control" placeholder="" value="{{this.user.NgayDKPremium}}" readonly/>
+        </div>
+        {{#if (Equal this.user.Permission 0)}}
+        <div class="form-group">
+            <label for="txtNgayhh">Ngày hết hạn</label>
+            <input type="text" name="ngayhh" id="txtNgayhh" class="form-control" placeholder="" value="{{this.user.NgayHHPremium}}" readonly/>
+        </div>
+        {{/if}}
+        <div class="form-group">
             <label for="txtName">Họ và tên</label>
             <input type="text" name="Fullname" id="txtName" class="form-control" placeholder="" value="{{this.user.Fullname}}" readonly/>
         </div>
