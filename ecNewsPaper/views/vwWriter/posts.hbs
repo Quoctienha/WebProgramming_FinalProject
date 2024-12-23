@@ -1,19 +1,12 @@
-<div class="container mt-4">
-    <h2>Quản lý bài viết (Posts)</h2>
-    <hr>
-
-    <!-- Button to add a new post -->
-    <a href="/writer/add" class="btn btn-success mb-4">
-        Thêm bài viết
-        <i class="bi bi-plus-lg"></i>
-    </a>
-
-    <hr>
-
-    <h5>Danh sách bài viết</h5>
+<div class="card ">
+  <div class="card-header text-center h3 bg bg-info text-white">
+    Quản lý bài viết "{{status}}"
+  </div>
+  <div class="card-body p-0 pt-3">
+    {{#if posts}}
     <!-- Display the list of posts -->
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-striped border m-0">
+        <thead class="bg bg-warning ">
             <tr>
                 <th>#</th>
                 <th>Tiêu đề</th>
@@ -62,4 +55,47 @@
             {{/each}}
         </tbody>
     </table>
+    {{else}}
+     <div class="alert alert-info m-0 text-center" role="alert">
+        Hiện tại không có bài viết nào của bạn ở trạng thái này
+      </div>
+    {{/if}}
+  </div>
+  <div class="card-footer d-flex justify-content-center">
+    {{#if needPagination}}
+    <nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <!-- Nút Previous -->
+    <li class="page-item {{#if (Equal this.current_page 1)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="/writer?status={{status}}&page={{Decrement this.current_page}}" >
+        Previous
+      </a>
+    </li>
+      <!-- Các số trang -->
+      {{#each this.pageNumbers}}
+      {{#if active}}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{value}}</a>
+      </li>
+      {{else}}
+      <li class="page-item">
+        <a class="page-link" href="/writer?status={{../status}}&page={{value}}">{{value}}</a>
+      </li>
+      {{/if}}
+      {{/each}}
+      <!--Nút next-->
+      <li class="page-item {{#if (Equal this.current_page totalPages)}}disabled{{/if}}">
+      <a class="page-link" 
+         href="/writer?status={{status}}&page={{Increment this.current_page}}" >
+        Next
+      </a>
+    </li>
+    </ul>
+    </nav>
+  {{/if}}
+  </div>
 </div>
+
+
+

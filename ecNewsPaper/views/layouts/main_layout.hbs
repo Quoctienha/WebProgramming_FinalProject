@@ -37,7 +37,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <!-- Search form -->
-        <form action="/posts/bySearch" method="GET" class="form-inline my-2 my-lg-0 col-9 p-0 mr-auto">
+        <form action="/posts/bySearch" method="GET" class="form-inline my-2 my-lg-0 col-8 p-0 mr-auto">
           <input class="form-control mr-sm-2 col-12 col-lg-9" name="keyword" type="search" placeholder="Tìm kiếm bài viết..." aria-label="Search" required>
           <button class="btn btn-outline-light my-2 my-sm-2" type="submit">
             <b>
@@ -47,11 +47,28 @@
           </button>
         </form>
         {{#if authUser.Permission}}
+        <!--editor-->
         {{#if (Equal authUser.Permission 2)}}
-           <a href="/editor/drafts" class="btn btn-primary">Go to Draft</a>
+           <a href="/editor/drafts" class="btn btn-primary">Đến Draft</a>
         {{/if}}
+        <!--Writer-->
         {{#if (Equal authUser.Permission 1)}}
-            <a href="/writer" class="btn btn-primary">Write a post</a>
+            <ul class="navbar-nav">
+              <li class="nav-item active">
+                <a class="nav-link" href="/writer/add">Thêm bài viết</a>
+              </li>
+              <li class="nav-item dropdown active">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                 Danh sách
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/writer?status=Chờ duyệt">Chờ duyệt</a>
+                  <a class="dropdown-item" href="/writer?status=Chờ xuất bản">Chờ xuất bản</a>
+                  <a class="dropdown-item" href="/writer?status=Đã xuất bản">Đã xuất bản</a>
+                  <a class="dropdown-item" href="/writer?status=Từ chối">Bị từ chối</a>
+                </div>
+              </li>
+           </ul>
         {{/if}}
         {{/if}}
         <!-- (small screens) -->

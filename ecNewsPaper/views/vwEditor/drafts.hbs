@@ -39,6 +39,7 @@
     format: 'd/m/Y H:i:s',
     mask: true
   });
+
   </script>
 <script>
   
@@ -216,9 +217,10 @@ document.getElementById("confirmReject").addEventListener("click", async () => {
 
 </script>
 {{/section}}
-<h2 style=" text-align: center">Danh sách bài viết </h2>
-
-<!-- Buttons to toggle between drafts -->
+<div class="card">
+  <h3 class="card-header text-center bg bg-info text-white">Danh sách bài viết</h3>
+  <div class="card-body p-0 pt-3">
+    <!-- Buttons to toggle between drafts -->
 <div class="btn-group">
   <button id="showDrafts" class="btn btn-secondary w-100">
     Bài viết chờ duyệt
@@ -428,4 +430,9 @@ document.getElementById("confirmReject").addEventListener("click", async () => {
         <input type="text" class="form-control" id="txtDOB" name="raw_dob" required />
       </div>
   <button id="confirmApprove" class="btn btn-success mt-2">Xác nhận duyệt</button>
+</div>
+  </div>
+  <div class="card-footer text-center">
+              © ecNewsPaper
+   </div>
 </div>

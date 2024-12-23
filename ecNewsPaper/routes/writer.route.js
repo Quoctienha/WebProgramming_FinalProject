@@ -15,15 +15,44 @@ const router = express.Router();
 router.use(express.json());
 // Route to display all posts for a writer
 router.get('/',  async (req, res) => {
+    const status = req.query.status || "Chờ duyệt";
     const userUID = req.session.authUser.UserID;  // Get the UID stored in session during login
-    console.log(userUID);  // Logging the UID to check if it’s correct
+    const nRows = await postService.countPostsByUIDAndStatus(userUID, status)
+    const limit = parseInt(5);
+    const nPages = Math.ceil(nRows.total / limit);
+    //current page
+    const current_page =  Math.max(1, parseInt(req.query.page) || 1);
+    //offset
+    const offset = (current_page - 1) * limit;  
+    // Xác định dải trang hiển thị
+    const startPage = Math.max(1, current_page - 1); // Trang bắt đầu
+    const endPage = Math.min(nPages, current_page + 1); // Trang kết thúc
+    
+    const pageNumbers = [];    
+    for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push({
+            value: i,
+            active:i === +current_page
+        });
+    }
+
+
+    //console.log(status);
+    //console.log(userUID);  // Logging the UID to check if it’s correct
 
     // Fetch posts by UID
-   const posts = await postService.findPostsByUserID(userUID);
+   const posts = await postService.findPostsByUserID(userUID,status, limit, offset);
    posts.forEach(post => {
         post.TimePost = moment(post.TimePost).format('DD/MM/YYYY HH:mm:ss');
     });
-    res.render('vwWriter/posts', { posts });
+    res.render('vwWriter/posts', {
+        pageNumbers:pageNumbers,
+        needPagination: nPages > 1,
+        current_page: current_page,
+        totalPages: nPages,
+        status,
+        posts 
+    });
 
 });
 

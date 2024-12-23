@@ -61,9 +61,9 @@ document.getElementById('addPostForm').addEventListener('submit', function (even
 
 {{/section}}
 
-<div class="container mt-4">
-    <h2>Thêm bài viết mới</h2>
-    <hr>
+<div class="card">
+  <h3 class="card-header text-center bg bg-info text-white">Thêm bài viết mới</h3>
+  <div class="card-body bg bg-light">
     <!-- Form for adding a new post -->
     <form method="POST" action="/writer/add" id="addPostForm">
         <div class="form-group mb-2">
@@ -101,6 +101,9 @@ document.getElementById('addPostForm').addEventListener('submit', function (even
 
         <button type="submit" class="btn btn-success">Thêm bài viết</button>
     </form>
+  </div>
 </div>
+
+
 
 

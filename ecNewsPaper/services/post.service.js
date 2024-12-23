@@ -178,15 +178,22 @@ export default{
     },
 
     // Find posts by User UID using Knex
-    findPostsByUserID(UID) {
+    findPostsByUserID(UID,status, limit, offset) {
         return db('posts')
             .where('posts.UID', UID)
+            .where('StatusPost',status)
             .leftJoin('categories', 'posts.CID', '=', 'categories.CID')
             .leftJoin('subcategories', 'posts.SCID', '=', 'subcategories.SCID')
             .select('posts.*', 'categories.CName as CName', 'subcategories.SCName as SCName')
-            .orderBy('posts.TimePost', 'desc');
+            .orderBy('posts.TimePost', 'desc')
+            .limit(limit)
+            .offset(offset);;
 
         },
+
+    countPostsByUIDAndStatus(UID, status){
+        return db('posts').where('UID', UID).where('StatusPost',status).count('* as total').first();
+    },
 
     // Find all categories for the add post form
     findAllCategories() {
@@ -197,6 +204,7 @@ export default{
     findAllSubcategories() {
         return db('subcategories').select('*');
     },
+
     async addTagsToPost(PostID, Tags) {
         // Assuming you have a `post_tags` table for the relationship
         const tagPromises = Tags.map(tagID => {

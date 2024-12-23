@@ -3,10 +3,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.2.5/js/locales/vi.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.2.5/themes/fa/theme.min.js"></script>
   <script>
+    //, 'png', 'gif'
     $('#fuMain').fileinput({
       dropZoneEnabled: false,
       maxFileCount: 5,
-      allowedFileExtensions: ['jpg', 'png', 'gif'],
+      allowedFileExtensions: ['jpg'],
       theme: 'fa',
       language: 'vi',
       showUpload: false,
@@ -38,7 +39,7 @@
                 <!-- Submit Button -->
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success px-4 py-2">
-                        <i class="fas fa-cloud-upload-alt"></i> Upload
+                        <i class="fas fa-cloud-upload-alt"></i> upload
                     </button>
                 </div>
             </form>
