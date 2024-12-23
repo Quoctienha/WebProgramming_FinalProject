@@ -8,6 +8,7 @@
         { CID: "{{this.CID}}", SCID: "{{this.SCID}}", SCName: "{{this.SCName}}" },
         {{/each}}
     ];
+
     document.getElementById('CID').addEventListener('change', function() {
         const selectedCID = this.value;
         const subcategorySelect = document.getElementById('SCID');
@@ -21,9 +22,7 @@
             }
         });
     });
-</script>
 
-<script>
     let editorContent, editorSummary;
     document.addEventListener('DOMContentLoaded', function () {
         // Initialize Select2 for tags
@@ -32,6 +31,7 @@
             allowClear: true
         });
     });
+
 // Initialize CKEditor for ContentEditor
 ClassicEditor.create(document.querySelector('#ContentEditor'))
     .then(newEditor => {
@@ -50,28 +50,43 @@ ClassicEditor.create(document.querySelector('#SumContentEditor'))
         console.error("Error initializing CKEditor for Summary:", error);
     });
 
-document.getElementById('addPostForm').addEventListener('submit', function (event) {
-    const isPremium = document.getElementById("premiumSelect").checked ? 1 : 0; 
-    // Prevent form submission if editors are not initialized
-    if (!editorContent || !editorSummary) {
-        event.preventDefault();
-        alert('Vui lòng đợi trình chỉnh sửa nội dung tải xong.');
-        return;
-    }
+// Form validation for Categories and Subcategories
+    document.getElementById('addPostForm').addEventListener('submit', function (event) {
+        const isPremium = document.getElementById("premiumSelect").checked ? 1 : 0; 
+        const category = document.getElementById('CID').value;
+        const subcategory = document.getElementById('SCID').value;
 
-    // Ensure data is captured from CKEditor before submission
-    document.getElementById('Content').value = editorContent.getData();
-    document.getElementById('SumContent').value = editorSummary.getData();
-     // Add the Premium value to the form data
-    const premiumInput = document.createElement('input');
-    premiumInput.type = 'hidden';
-    premiumInput.name = 'Premium'; // Ensure this matches your server-side expectation
-    premiumInput.value = isPremium; // Set the value to 1 or 0
-    this.appendChild(premiumInput); // Append it to the form
-});
+        if (!category) {
+            alert('Vui lòng chọn danh mục chính.');
+            event.preventDefault();
+            return;
+        }
 
+        if (!subcategory) {
+            alert('Vui lòng chọn chuyên mục phụ.');
+            event.preventDefault();
+            return;
+        }
+
+        // Prevent form submission if editors are not initialized
+        if (!editorContent || !editorSummary) {
+            event.preventDefault();
+            alert('Vui lòng đợi trình chỉnh sửa nội dung tải xong.');
+            return;
+        }
+
+        // Ensure data is captured from CKEditor before submission
+        document.getElementById('Content').value = editorContent.getData();
+        document.getElementById('SumContent').value = editorSummary.getData();
+        
+        // Add the Premium value to the form data
+        const premiumInput = document.createElement('input');
+        premiumInput.type = 'hidden';
+        premiumInput.name = 'Premium';
+        premiumInput.value = isPremium;
+        this.appendChild(premiumInput);
+    });
 </script>
-
 {{/section}}
 
 <div class="card">
@@ -94,7 +109,7 @@ document.getElementById('addPostForm').addEventListener('submit', function (even
         </div>
         <div class="form-group mb-2">
             <label for="SCID">Chuyên mục phụ</label>
-            <select name="SCID" id="SCID" class="form-control">
+            <select name="SCID" id="SCID" class="form-control" required>
                 <option value="">Chọn chuyên mục phụ</option>
             </select>
         </div>
@@ -123,14 +138,7 @@ document.getElementById('addPostForm').addEventListener('submit', function (even
             <input type="checkbox" id="premiumSelect">
             <label for="premiumSelect">Premium</label>
         </div>
-       
-
-
         <button type="submit" class="btn btn-success">Thêm bài viết</button>
     </form>
   </div>
 </div>
-
-
-
-

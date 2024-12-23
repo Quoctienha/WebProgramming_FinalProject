@@ -67,6 +67,19 @@
         editPostForm.addEventListener('submit', function (event) {
             console.log("Form submission triggered."); // Debugging: Verify submission event
 
+            // Ensure categories and subcategories are selected
+            if (!categorySelect.value) {
+                event.preventDefault();
+                alert('Vui lòng chọn danh mục.');
+                return;
+            }
+
+            if (!subcategorySelect.value) {
+                event.preventDefault();
+                alert('Vui lòng chọn chuyên mục phụ.');
+                return;
+            }
+
             // Capture the Premium value
             const isPremium = premiumCheckbox.checked ? 1 : 0; 
             alert("Premium value: " + isPremium); // Alert the value of Premium for debugging
@@ -119,7 +132,7 @@
 
         <div class="form-group mb-2">
             <label for="SCID">Chuyên mục phụ</label>
-            <select name="SCID" id="SCID" class="form-control">
+            <select name="SCID" id="SCID" class="form-control" required>
                 <option value="">Chọn chuyên mục phụ</option>
             </select>
         </div>

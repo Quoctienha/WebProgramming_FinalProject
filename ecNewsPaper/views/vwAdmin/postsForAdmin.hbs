@@ -214,14 +214,8 @@ th {
                 <td>{{this.StatusPost}}</td>
                 <td>
                     <!-- Link to edit post -->
-                      
-                      {{#if (Stringcompare this.UID ../userUID) }}
-                        {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
-                              <a href="/admin/post/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
-                              Sửa   
-                              <i class="bi bi-pencil-fill "></i>
-                              </a>
-                               <form method="POST" action="/admin/post/delete" class="d-inline"
+                      {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
+                              <form method="POST" action="/admin/post/delete" class="d-inline"
                               onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
                               <input type="hidden" name="PostID" value="{{this.PostID}}">
                               <button type="submit" class="btn btn-danger">
@@ -229,6 +223,13 @@ th {
                                 <i class="bi bi-trash"></i>
                               </button>
                            </form>
+                      {{#if (Stringcompare this.UID ../userUID) }}
+                        
+                              <a href="/admin/post/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
+                              Sửa   
+                              <i class="bi bi-pencil-fill "></i>
+                              </a>
+
 
                         {{/if}}
                       {{/if}}
