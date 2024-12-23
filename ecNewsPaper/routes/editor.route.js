@@ -14,7 +14,6 @@ router.use(express.json()); // Middleware to parse JSON
 router.get("/drafts", async (req, res) => {
   try {
     const editorId = req.session.authUser.UserID;
-    console.log(editorId);  
 
     if (!editorId) {
       return res.status(401).send("Unauthorized access. Editor ID missing.");
@@ -24,7 +23,6 @@ router.get("/drafts", async (req, res) => {
     const drafts2=await editorService.getAcceptedPostsByEditor(editorId);
     const drafts3=await editorService.getExportedPostsByEditor(editorId);
     const drafts4=await editorService.getDenyPostsByEditor(editorId);
-   console.log(drafts);
  
     res.render("vwEditor/drafts", {   drafts,
       drafts2,
@@ -43,16 +41,14 @@ router.get("/drafts", async (req, res) => {
  */
 router.post("/approve", async (req, res) => {
   try {
-    const { PostID ,TimePublic,Premium} = req.body; // Correctly extract PostID from req.body
+    const { PostID ,TimePublic} = req.body; // Correctly extract PostID from req.body
     console.log("PostID received:", PostID); // Log the received PostID
-    console.log(TimePublic,Premium);
     const TimePublic2=moment(TimePublic, 'DD/MM/YYYY HH/mm/ss').format('YYYY-MM-DD HH/mm/ss');
-    console.log(TimePublic2);
     if (!PostID) {
       return res.status(400).send("Thiếu thông tin để duyệt bài viết."); // Missing PostID
     }
 
-    await editorService.approvePost(PostID,TimePublic2,Premium);
+    await editorService.approvePost(PostID,TimePublic2);
     res.json({ message: "Bài viết đã được duyệt." });
   } catch (error) {
     console.error("Error approving post:", error);
@@ -70,7 +66,6 @@ router.post("/reject", async (req, res) => {
   try {
     const { PostID ,reason } = req.body; // Correctly extract PostID from req.body
     console.log("PostID received:", PostID); // Log the received PostID
-    console.log(reason);
     if (!PostID) {
       return res.status(400).send("Thiếu thông tin để duyệt bài viết."); // Missing PostID
     }

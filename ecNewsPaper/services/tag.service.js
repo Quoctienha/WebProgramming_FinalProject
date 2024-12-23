@@ -49,6 +49,17 @@ export default{
             .where('TagID', tag.TagID)
             .update('TName', tag.TName);
     },
-
+    insertTagsToPost(PostID,TagID)
+    {
+        return db('post_tags')
+        .insert({ PostID, TagID });
+    },
+    deleteTagsByPostID(PostID) {
+        return db('post_tags')
+            .where('PostID', PostID) 
+            .del();                  
+    }
+    
+    
     
 }

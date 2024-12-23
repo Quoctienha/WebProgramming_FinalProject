@@ -94,7 +94,7 @@ export const getExportedPostsByEditor = async (editorId) => {
     throw error;
   }
 };
-export const approvePost = async(PostID,TimePublic,Premium) =>{
+export const approvePost = async(PostID,TimePublic) =>{
 
     try
     { 
@@ -103,7 +103,7 @@ export const approvePost = async(PostID,TimePublic,Premium) =>{
       .update({
         "p.StatusPost": "Chờ xuất bản",
         "p.TimePublic":TimePublic,
-        "p.Premium":Premium // Update the StatusPost column with the new value
+
   });
     }catch (error) {
     console.error("Error fetching draft posts:", error);

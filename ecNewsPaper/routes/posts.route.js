@@ -89,7 +89,6 @@ router.get('/byCategory', async function( req, res) {
       });
   }
   const posts = await postService.findPostsByCID(categoryId, limit, offset);
-  console.log(posts);
   for (let post of posts) {
     // Định dạng thời gian cho từng post
     post.TimePublic = moment(post.TimePublic).format('DD/MM/YYYY HH:mm:ss');

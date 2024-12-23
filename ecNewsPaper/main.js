@@ -48,6 +48,12 @@ app.engine('hbs', engine({
     Equal(a, b){
       return Number(a) === Number(b);
     },
+    Include(a,b)
+    { if (Array.isArray(b) && b.includes(a)) {
+      return true;
+    }
+      return false;
+    },
     Stringcompare(a,b){
       return String(a)=== String(b);
     },

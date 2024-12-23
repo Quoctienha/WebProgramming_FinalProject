@@ -3,82 +3,99 @@
 {{/section}}
 
 {{#section 'js'}}
- <script>
-    // Handle subcategories dropdown
-    const subcategories = [
-        {{#each subcategories}}
-        { CID: "{{this.CID}}", SCID: "{{this.SCID}}", SCName: "{{this.SCName}}" },
-        {{/each}}
-    ];
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      
+        console.log("DOM fully loaded and parsed."); // Debugging: Verify script is running
 
-    document.getElementById('CID').addEventListener('change', function () {
-        const selectedCID = this.value;
+        // Handle subcategories dropdown
+        const subcategories = [
+            {{#each subcategories}}
+            { CID: "{{this.CID}}", SCID: "{{this.SCID}}", SCName: "{{this.SCName}}" },
+            {{/each}}
+        ];
+
+        const categorySelect = document.getElementById('CID');
         const subcategorySelect = document.getElementById('SCID');
-        subcategorySelect.innerHTML = '<option value="">Chọn chuyên mục phụ</option>';
-        subcategories.forEach(function (subcategory) {
-            if (subcategory.CID === selectedCID) {
-                const option = document.createElement('option');
-                option.value = subcategory.SCID;
-                option.text = subcategory.SCName;
-                option.selected = (option.value === "{{post.SCID}}"); // Pre-select current subcategory
-                subcategorySelect.appendChild(option);
+        const premiumCheckbox = document.getElementById('premiumSelect');
+
+        if (!categorySelect || !subcategorySelect || !premiumCheckbox) {
+            console.error("One or more required DOM elements are missing.");
+            return; // Stop execution if elements are not found
+        }
+
+        categorySelect.addEventListener('change', function () {
+            const selectedCID = this.value;
+            subcategorySelect.innerHTML = '<option value="">Chọn chuyên mục phụ</option>';
+            
+            // Populate subcategories based on selected category
+            subcategories.forEach(function (subcategory) {
+                if (subcategory.CID === selectedCID) {
+                    const option = document.createElement('option');
+                    option.value = subcategory.SCID;
+                    option.text = subcategory.SCName;
+                    option.selected = (option.value === "{{post.SCID}}"); // Pre-select
+                    subcategorySelect.appendChild(option);
+                }
+            });
+        });
+
+        // Preload subcategories based on current CID
+        categorySelect.dispatchEvent(new Event('change'));
+
+        // Initialize CKEditor for "Nội dung bài viết" and "Tóm tắt nội dung"
+        let editorContent, editorSummary;
+
+        ClassicEditor.create(document.querySelector('#Content'))
+            .then(editor => {
+                console.log("Content CKEditor initialized.");
+                editorContent = editor;
+                editorContent.setData(`{{{post.Content}}}`); // Load existing content
+            })
+            .catch(error => console.error("Error initializing Content CKEditor:", error ));
+
+        ClassicEditor.create(document.querySelector('#SumContent'))
+            .then(editor => {
+                console.log("Summary CKEditor initialized.");
+                editorSummary = editor;
+                editorSummary.setData(`{{{post.SumContent}}}`); // Load existing summary
+            })
+            .catch(error => console.error("Error initializing Summary CKEditor:", error));
+
+        // Form Submission Handling
+        const editPostForm = document.querySelector('form');
+        editPostForm.addEventListener('submit', function (event) {
+            console.log("Form submission triggered."); // Debugging: Verify submission event
+
+            // Capture the Premium value
+            const isPremium = premiumCheckbox.checked ? 1 : 0; 
+            alert("Premium value: " + isPremium); // Alert the value of Premium for debugging
+
+            // Prevent form submission if editors are not initialized
+            if (!editorContent || !editorSummary) {
+                event.preventDefault();
+                alert('Vui lòng đợi trình chỉnh sửa nội dung tải xong.');
+                return;
             }
+
+            // Ensure data is captured from CKEditor before submission
+            document.getElementById('Content').value = editorContent.getData();
+            document.getElementById('SumContent').value = editorSummary.getData();
+
+            // Add the Premium value to the form data
+            let premiumInput = document.createElement('input');
+            premiumInput.type = 'hidden';
+            premiumInput.name = 'Premium'; // Ensure this matches your server-side expectation
+            premiumInput.value = isPremium; // Set the value to 1 or 0
+            this.appendChild(premiumInput); // Append it to the form
+              $('#Tags').select2({
+            placeholder: "Chọn thẻ",
+            allowClear: true
+        }); 
         });
     });
-
-    // Preload subcategories based on current CID
-    document.getElementById('CID').dispatchEvent(new Event('change'));
-
-    // Initialize CKEditor for the Content field
-    let editorContent, editorSummary;
-
-    // Initialize CKEditor for "Nội dung bài viết" (Content)
-    ClassicEditor.create(document.querySelector('#Content'))
-        .then(editor => {
-            editorContent = editor;
-            // Set initial content value
-            editorContent.setData(`{{{post.Content}}}`); // Load existing content
-        })
-        .catch(error => {
-            console.error("Error initializing Content CKEditor:", error);
-        });
-
-    // Initialize CKEditor for "Tóm tắt nội dung" (Summary)
-    ClassicEditor.create(document.querySelector('#SumContent'))
-        .then(editor => {
-            editorSummary = editor;
-            // Set initial summary value
-            editorSummary.setData(`{{{post.SumContent}}}`); // Load existing summary
-        })
-        .catch(error => {
-            console.error("Error initializing Summary CKEditor:", error);
-        });
-
-    // Form Submission Handling
-    const editPostForm = document.querySelector('form');
-    editPostForm.addEventListener('submit', function (event) {
-        // Handle content editor
-        if (editorContent) {
-            const contentData = editorContent.getData();
-            document.getElementById('Content').value = contentData;
-        } else {
-            event.preventDefault();
-            alert('Vui lòng đợi trình soạn thảo nội dung tải xong.');
-        }
-
-        // Handle summary editor
-        if (editorSummary) {
-            const summaryData = editorSummary.getData();
-            document.getElementById('SumContent').value = summaryData;
-        } else {
-            event.preventDefault();
-            alert('Vui lòng đợi trình soạn thảo tóm tắt tải xong.');
-        }
-    });
-
 </script>
 {{/section}}
-
 <div class="container mt-4">
     <h2>Sửa bài viết</h2>
     <hr>
@@ -109,7 +126,7 @@
 
         <!-- Summary Editor -->
         <div class="form-group mb-2">
-            <label for="SumContent ">Tóm tắt nội dung</label>
+            <label for="SumContent">Tóm tắt nội dung</label>
             <textarea name="SumContent" id="SumContent" class="form-control">{{{post.SumContent}}}</textarea>
         </div>
 
@@ -118,7 +135,22 @@
             <label for="Content">Nội dung bài viết</label>
             <textarea name="Content" id="Content" class="form-control">{{{post.Content}}}</textarea>
         </div>
+           <div class="form-group mb-2">
+                <label for="Tags">Thẻ bài viết</label>
+                <select name="Tags[]" id="Tags" class="form-control" multiple="multiple">
+                    {{#each tags}}
+                    <option value="{{this.TagID}}">{{this.TName}}</option>
+                    {{/each}}
+                </select>
+            </div>
 
+
+        <label for="premiumSelect">Chọn loại:</label>
+        <div>
+            <input type="checkbox" id="premiumSelect" name="Premium" {{#if post.Premium}}checked{{/if}}>
+            <label for="premiumSelect">Premium</label>
+        </div>
+        
         <button type="submit" class="btn btn-warning">
             Cập nhật bài viết
         </button>

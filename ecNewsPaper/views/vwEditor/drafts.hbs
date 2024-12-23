@@ -90,7 +90,7 @@ function approvePost(PostId) {
 
 // Confirm approval with selected options
 document.getElementById("confirmApprove").addEventListener("click", async () => {
-  const isPremium = document.getElementById("premiumSelect").checked ? 1 : 0; // Set to 1 if checked, otherwise 0
+
   const timePublic = document.getElementById("txtDOB").value; // Get the selected time
   if (!timePublic) {
     alert("Vui lòng chọn thời gian xuất bản.");
@@ -105,7 +105,7 @@ document.getElementById("confirmApprove").addEventListener("click", async () => 
       },
       body: JSON.stringify({
         PostID: currentPostId, // Use the stored Post ID
-        Premium: isPremium, // Include the premium status (1 or 0)
+  
         TimePublic: timePublic, // Include the time public
       }),
     });
@@ -122,7 +122,7 @@ document.getElementById("confirmApprove").addEventListener("click", async () => 
     alert("Đã xảy ra lỗi khi duyệt bài viết.");
   } finally {
     document.getElementById("approvalSection").style.display = "none"; // Hide the approval section after processing
-    document.getElementById("premiumSelect").checked = false; // Clear the checkbox
+
     document.getElementById("timePublicSelect").value = ""; // Clear the date picker
   }
 });
@@ -418,15 +418,8 @@ document.getElementById("confirmReject").addEventListener("click", async () => {
 <!-- Premium and TimePublic Selection -->
 <!-- Premium and TimePublic Selection -->
 <div id="approvalSection" style="display: none; margin-top: 20px;">
-  <label for="premiumSelect">Chọn loại:</label>
-  <div>
-    <input type="checkbox" id="premiumSelect">
-    <label for="premiumSelect">Premium</label>
-  </div>
-
-
      <div class="form-group">
-        <label for="txtDOB">Ngày sinh</label>
+        <label for="txtDOB">Ngày xuất bản</label>
         <input type="text" class="form-control" id="txtDOB" name="raw_dob" required />
       </div>
   <button id="confirmApprove" class="btn btn-success mt-2">Xác nhận duyệt</button>

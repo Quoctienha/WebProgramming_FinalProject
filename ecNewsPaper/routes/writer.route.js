@@ -7,6 +7,7 @@ import db from "../utils/db.js"
 import fs  from 'fs'
 import path  from 'path'
 import { fileURLToPath } from 'url';
+import tagService from '../services/tag.service.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -62,7 +63,8 @@ router.get('/',  async (req, res) => {
 router.get('/add',  async (req, res) => {
     const categories = await postService.findAllCategories();
     const subcategories = await postService.findAllSubcategories();
-    const tags = await postService.findAllTags();
+    const tags = await tagService.findAllTag();
+    console.log(tags);
     res.render('vwWriter/addPost', { categories, subcategories, tags });
 });
 
@@ -89,10 +91,18 @@ router.post('/add', auth, async (req, res) => {
     };
 
     try {
-        // Lưu bài viết và lấy `postID`
+        // Step 1: Insert the post and retrieve the PostID
         const postID = await postService.addPost(newPost);
 
-        // Chuyển hướng tới form upload, truyền `postID` qua query parameter
+        // Step 2: Insert tags into post_tags
+        const tags = Array.isArray(req.body.Tags) ? req.body.Tags : req.body.Tags.split(',');
+    
+
+        for (const tagID of tags) {
+            await tagService.insertTagsToPost(postID, tagID);
+        }
+
+        // Redirect to upload photo
         res.redirect(`/writer/uploadphoto?postID=${postID}`);
     } catch (error) {
         console.error('Error inserting post:', error);
@@ -177,8 +187,12 @@ router.post('/uploadphoto', auth, upload.single('fuMain'), (req, res) => {
 // Route for updating a post
 router.post('/edit',  async (req, res) => {
     try {
+        let i;
         console.log("Request body:", req.body); // Debugging line to check incoming data
-
+        if(req.body.Premium === "on")
+        {
+            i=1;
+        }
         const updatedPost = {
             PostID: req.body.PostID,
             PostTitle: req.body.PostTitle,
@@ -194,12 +208,20 @@ router.post('/edit',  async (req, res) => {
             StatusPost: 'Chờ duyệt',
             Reason: req.body.Reason || null,
             TimePublic: req.body.TimePublic || null,
-            Premium: req.body.Premium || 0,
+            Premium: i || 0,
         };
-        console.log(req.body.Content);
-        console.log("memaybeo");
-        console.log("Updated post data:", updatedPost); // Debugging line
+        console.log(req.body.Tags);
+        if(req.body.Tags)
+        {   
+            await tagService.deleteTagsByPostID(req.body.PostID);
+            const tags = Array.isArray(req.body.Tags) ? req.body.Tags : req.body.Tags.split(',');
+        
 
+            for (const tagID of tags) {
+                await tagService.insertTagsToPost(req.body.PostID, tagID);
+            }
+        }
+        
         await postService.updatePost(updatedPost);
 
         res.redirect('/writer');
@@ -216,14 +238,14 @@ router.get('/edit/:PostID',  async (req, res) => {
     const categories = await postService.findAllCategories();
     const subcategories = await postService.findAllSubcategories();
     const tags = await postService.findAllTags();
-
- 
+    const tagsSelected=await tagService.findTagByPostID(PostID);
+    
 
     if (!post) {
         return res.status(404).send('Post not found');
     }
 
-    res.render('vwWriter/editPost', { post, categories, subcategories, tags });
+    res.render('vwWriter/editPost', { post, categories, subcategories, tags,tagsSelected });
 });
 
 
