@@ -1,6 +1,13 @@
 {{#section 'css'}}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+  <style>
+th {
+    vertical-align: middle; /* Vertically center the content */
+    text-align: center; /* Horizontally center the text */
 
+}
+
+  </style>
 {{/section}}
 {{#section 'js'}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
@@ -106,51 +113,55 @@
 </script>
 <script>
    function toggleSection(sectionId, buttonId) {
-    // Hide all sections
-    const sections = document.querySelectorAll(".drafts-table");
-    sections.forEach(section => section.style.display = "none");
+       // Hide all sections
+       const sections = document.querySelectorAll(".drafts-table");
+       sections.forEach(section => section.style.display = "none");
 
-    // Show the selected section
-    document.getElementById(sectionId).style.display = "block";
+       // Show the selected section
+       document.getElementById(sectionId).style.display = "block";
 
-    // Remove active state from all buttons
-    const buttons = document.querySelectorAll(".btn-group .btn");
-    buttons.forEach(button => {
-      button.classList.remove("btn-primary", "active");
-      button.classList.add("btn-secondary");
-    });
+       // Remove active state from all buttons
+       const buttons = document.querySelectorAll(".btn-group .btn");
+       buttons.forEach(button => {
+           button.classList.remove("btn-primary", "active");
+           button.classList.add("btn-secondary");
+       });
 
-    // Add active state to the clicked button
-    const activeButton = document.getElementById(buttonId);
-    activeButton.classList.add("btn-primary", "active");
-    activeButton.classList.remove("btn-secondary");
+       // Add active state to the clicked button
+       const activeButton = document.getElementById(buttonId);
+       activeButton.classList.add("btn-primary", "active");
+       activeButton.classList.remove("btn-secondary");
 
-    // Hide the content section
-    hideContent();
-  }
+       // Hide the content section
+       hideContent();
+   }
+
    function viewContent(button) {
-    const content = button.getAttribute("data-content"); // Retrieve the content from the data attribute
+       const content = button.getAttribute("data-content"); // Retrieve the content from the data attribute
 
-    const contentSection = document.getElementById("selectedPostContent");
-    const contentDiv = document.getElementById("postContent");
+       const contentSection = document.getElementById("selectedPostContent");
+       const contentDiv = document.getElementById("postContent");
 
-    if (content) {
-      // Decode and display the web-formatted content
-      contentDiv.innerHTML = content; // Use innerHTML to render HTML or rich text
-      contentSection.style.display = "block"; // Make the content section visible
-    } else {
-      contentDiv.textContent = "Không có nội dung.";
-      contentSection.style.display = "none";
-    }
-  }
-  function hideContent() {
-  const contentSection = document.getElementById("selectedPostContent");
-  const contentDiv = document.getElementById("postContent");
+       if (content) {
+           // Decode and display the web-formatted content
+           contentDiv.innerHTML = content; // Use innerHTML to render HTML or rich text
+           contentSection.style.display = "block"; // Make the content section visible
 
-  contentDiv.innerHTML = ""; // Clear content
-  contentSection.style.display = "none"; // Hide the section
-}
+           // Scroll to the content section
+           contentSection.scrollIntoView({ behavior: 'smooth' });
+       } else {
+           contentDiv.textContent = "Không có nội dung.";
+           contentSection.style.display = "none";
+       }
+   }
 
+   function hideContent() {
+       const contentSection = document.getElementById("selectedPostContent");
+       const contentDiv = document.getElementById("postContent");
+
+       contentDiv.innerHTML = ""; // Clear content
+       contentSection.style.display = "none"; // Hide the section
+   }
 </script>
 {{/section}}
 <div class="card ">
@@ -162,21 +173,37 @@
     <!-- Display the list of posts -->
     <table class="table table-striped border m-0">
         <thead class="bg bg-warning ">
-            <tr>
+            <tr style="text-align: center middle; ">
                 <th>#</th>
                 <th>Tiêu đề</th>
                 <th>Danh mục</th>
                 <th>Chuyên mục phụ</th>
                 <th>Ngày đăng</th>
                 <th>Trạng thái</th>
-                <th>Hành động</th>
                 {{#if (Stringcompare status "Chờ duyệt")}}
-                <th>Duyệt/từ chối</th>
+                    <th>Hành động</th>
+                {{/if}}
+                {{#if (Stringcompare status "Từ chối")}}
+                    <th>Hành động</th>
+                {{/if}}
+                {{#if (Stringcompare status "Chờ duyệt")}}
+                <th>Duyệt</th>
+                <th>Từ chối</th>
+                {{/if}}
+                {{#if (Stringcompare status "Từ chối")}}
+                <th>Duyệt</th>
+                {{/if}}
+                {{#if (Stringcompare status "Đã xuất bản")}}
+                   <th></th>
+                {{/if}}
+                 {{#if (Stringcompare status "Chờ xuất bản")}}
+                   <th></th>
                 {{/if}}
                 <th>Xem nội dung bài viết</th>
             </tr>
         </thead>
         <tbody>
+     
             {{#each posts}}
             <tr>
                 <td>{{this.PostID}}</td>
@@ -187,52 +214,76 @@
                 <td>{{this.StatusPost}}</td>
                 <td>
                     <!-- Link to edit post -->
-                    
-                     {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
-                         <a href="/admin/post/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
-                        Sửa
-                        
-                        <i class="bi bi-pencil-fill "></i>
-                        </a>
+                      
+                      {{#if (Stringcompare this.UID ../userUID) }}
+                        {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
+                              <a href="/admin/post/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
+                              Sửa   
+                              <i class="bi bi-pencil-fill "></i>
+                              </a>
+                               <form method="POST" action="/admin/post/delete" class="d-inline"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
+                              <input type="hidden" name="PostID" value="{{this.PostID}}">
+                              <button type="submit" class="btn btn-danger">
+                                Xóa
+                                <i class="bi bi-trash"></i>
+                              </button>
+                           </form>
 
-                    {{/if}}
+                        {{/if}}
+                      {{/if}}
+                     
                   
                      {{#if (Stringcompare this.StatusPost "Từ chối")}}
+          
+                           <form method="POST" action="/admin/post/delete" class="d-inline"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
+                              <input type="hidden" name="PostID" value="{{this.PostID}}">
+                              <button type="submit" class="btn btn-danger">
+                                Xóa
+                                <i class="bi bi-trash"></i>
+                              </button>
+                           </form>
+                            {{#if (Stringcompare this.UID ../userUID) }}
                       
-                        <button 
+                              <a href="/admin/post/edit/{{this.PostID}}" class="btn btn-warning" aria-label="Sửa bài viết">
+                              Sửa   
+                              <i class="bi bi-pencil-fill "></i>
+                              </a>
+                             {{/if}}
+                 
+                        <td>
+                          <button 
                           onclick="approvePost({{this.PostID}})" 
                           class="btn btn-success btn-sm">
                           Duyệt
                         </button>
+                        </td>
+                   
                         
                     {{/if}}
                     <!-- Form to delete post -->
-                    <form method="POST" action="/admin/post/delete" class="d-inline"
-                        onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
-                        <input type="hidden" name="PostID" value="{{this.PostID}}">
-                        <button type="submit" class="btn btn-danger">
-                            Xóa
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </form>
+                   
 
                 </td>
-                <td>
-                    {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
-                        <button 
-                          type="button" 
-                          onclick="approvePost({{this.PostID}})" 
-                          class="btn btn-success btn-sm">
-                          Duyệt
+                  {{#if (Stringcompare this.StatusPost "Chờ duyệt")}}
+                    <td> 
+                            <button 
+                              type="button" 
+                              onclick="approvePost({{this.PostID}})" 
+                              class="btn btn-success btn-sm">
+                              Duyệt
+                            </button>             
+                    </td>
+                    <td>
+                      </button>
+                            <button 
+                              onclick="rejectPost({{this.PostID}})" 
+                              class="btn btn-danger btn-sm">
+                              Từ chối
                         </button>
-                        <button 
-                          onclick="rejectPost({{this.PostID}})" 
-                          class="btn btn-danger btn-sm">
-                          Từ chối
-                        </button>
-
-                    {{/if}}
-                </td>
+                    </td>
+                {{/if}}
                 <td>
                    <button 
                     class="btn btn-info btn-sm" 

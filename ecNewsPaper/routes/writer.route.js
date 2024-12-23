@@ -19,6 +19,7 @@ router.get('/',  async (req, res) => {
     const status = req.query.status || "Chờ duyệt";
     const userUID = req.session.authUser.UserID;  // Get the UID stored in session during login
     const nRows = await postService.countPostsByUIDAndStatus(userUID, status)
+
     const limit = parseInt(5);
     const nPages = Math.ceil(nRows.total / limit);
     //current page
@@ -43,6 +44,8 @@ router.get('/',  async (req, res) => {
 
     // Fetch posts by UID
    const posts = await postService.findPostsByUserID(userUID,status, limit, offset);
+   const postsDeniedReason=await postService.postsDeniedReason(userUID);
+  
    posts.forEach(post => {
         post.TimePost = moment(post.TimePost).format('DD/MM/YYYY HH:mm:ss');
     });
@@ -52,7 +55,8 @@ router.get('/',  async (req, res) => {
         current_page: current_page,
         totalPages: nPages,
         status,
-        posts 
+        posts,
+  
     });
 
 });

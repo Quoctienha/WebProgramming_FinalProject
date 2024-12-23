@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const router = express.Router();
 router.use(express.json()); // Middleware to parse JSON
-// Route to display all posts for a admin
+// Route to display all posts for an admin
 router.get('/',  async (req, res) => {
     const status = req.query.status || "Chờ duyệt";
     const userUID = req.session.authUser.UserID;  // Get the UID stored in session during login
@@ -41,8 +41,11 @@ router.get('/',  async (req, res) => {
 
     // Fetch posts by UID
    const posts = await postService.findPostsByStatus(status);
+
+    console.log(posts);
    posts.forEach(post => {
         post.TimePost = moment(post.TimePost).format('DD/MM/YYYY HH:mm:ss');
+        
     });
     res.render('vwAdmin/postsForAdmin', {
         pageNumbers:pageNumbers,
@@ -50,7 +53,9 @@ router.get('/',  async (req, res) => {
         current_page: current_page,
         totalPages: nPages,
         status,
-        posts 
+        posts,
+
+        userUID
     });
 
 });
@@ -157,7 +162,6 @@ router.get('/add',  async (req, res) => {
     const categories = await postService.findAllCategories();
     const subcategories = await postService.findAllSubcategories();
     const tags = await tagService.findAllTag();
-    console.log(tags);
     res.render('vwAdmin/addPost', { categories, subcategories, tags });
 });
 

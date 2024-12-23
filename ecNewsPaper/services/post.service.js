@@ -218,12 +218,33 @@ export default{
     },
     findPostsByStatus(StatusPost)
     {
-        return db('posts').where('StatusPost',StatusPost);
+        return db('posts as p').where('StatusPost',StatusPost)  .join("categories as c", "c.CID", "p.CID")
+        .join("subcategories as s","p.SCID","s.SCID");
     },
     countPostsByStatus(StatusPost)
     {
         return db('posts').where('StatusPost',StatusPost).count('* as total').first();
+    },
+    postsDeniedReason(UID)
+    {
+        return db('posts').where('StatusPost',"Từ chối").where('UID',UID).select("Reason");
+    },
+    findCatagoriesAndSubCByPost(UID)
+    {
+        return db('posts as p')
+        .where("UID",UID)
+        .join("categories as c", "c.CID", "p.CID")
+        .join("subcategories as s","p.SCID","s.SCID")
+        .where("p.StatusPost", "Đã xuất bản")
+        .select(
+            "p.PostID",
+            "p.PostTitle",
+            "c.CName",
+            "s.SCName"
+
+        );
     }
     
+
     
 }
