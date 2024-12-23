@@ -19,6 +19,7 @@ import adminSubCatRouter from './routes/admin-subcategories.route.js';
 import adminReaderRouter from './routes/admin-reader.route.js';
 import adminWriterRouter from './routes/admin-writer.route.js'
 import adminEditorRouter from './routes/admin-editor.route.js';
+import adminPostRouter from './routes/admin-post.route.js';
 import writerRouter from "./routes/writer.route.js";
 import editorRouter from "./routes/editor.route.js";
 //auth
@@ -251,7 +252,10 @@ app.use('/admin/tags',authAdmin, adminTagRouter);
 app.use('/admin/reader',authAdmin, adminReaderRouter);
 app.use('/admin/writer',authAdmin, adminWriterRouter);
 app.use('/admin/editor',authAdmin, adminEditorRouter);
+app.use('/admin/post', authAdmin, adminPostRouter);
+//writer
 app.use("/writer",ensureWriter, writerRouter);
+//editor
 app.use("/editor",ensureEditor, editorRouter);
 
 app.use('/403',function (req, res, next) {

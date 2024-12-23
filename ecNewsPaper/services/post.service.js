@@ -215,6 +215,14 @@ export default{
     },
     findAllTags() {
         return db('tag').select('*');
+    },
+    findPostsByStatus(StatusPost)
+    {
+        return db('posts').where('StatusPost',StatusPost);
+    },
+    countPostsByStatus(StatusPost)
+    {
+        return db('posts').where('StatusPost',StatusPost).count('* as total').first();
     }
     
     
